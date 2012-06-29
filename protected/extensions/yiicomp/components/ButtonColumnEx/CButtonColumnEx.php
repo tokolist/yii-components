@@ -13,15 +13,28 @@ class CButtonColumnEx extends CButtonColumn
 
 	protected function renderDataCellContent($row,$data)
 	{
-		$tmp = $this->template;
+		$tmpTemplate = $this->template;
+		$tmpButtons = $this->buttons;
 
 		if($this->templateExpression !== null) {
 			$this->template = $this->evaluateExpression($this->templateExpression,array('data'=>$data,'row'=>$row));
 		}
+		
+		foreach($this->buttons as $buttonIndex => $button)
+		{
+			foreach($button['options'] as $optionIndex => $option)
+			{
+				$this->buttons[$buttonIndex]['options'][$optionIndex] = $this->evaluateExpression(
+					$this->buttons[$buttonIndex]['options'][$optionIndex],
+					array('data'=>$data,'row'=>$row)
+				);
+			}
+		}
 
 		parent::renderDataCellContent($row,$data);
 
-		$this->template = $tmp;
+		$this->template = $tmpTemplate;
+		$this->buttons = $tmpButtons;
 	}
 
 }
