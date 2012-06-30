@@ -32,6 +32,10 @@ return array(
 
 	// application components
 	'components'=>array(
+		'ih'=>array(
+			'class'=>'ext.yiicomp.components.ImageHandler.CImageHandler',
+		),
+		
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
@@ -62,7 +66,7 @@ return array(
 		*/
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-            'errorAction'=>'site/error',
+            //'errorAction'=>'site/error',
         ),
 		'log'=>array(
 			'class'=>'CLogRouter',

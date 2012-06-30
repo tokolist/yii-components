@@ -31,6 +31,31 @@ class SiteController extends Controller
 		// using the default layout 'protected/views/layouts/main.php'
 		$this->render('index');
 	}
+	
+	public function actionImageHandler()
+	{
+		$basePath = Yii::app()->basePath . '/../images/image_handler/';
+		$reloadSavePath = $basePath . 'reload_test/';
+		
+		Yii::app()->ih->load($basePath . 'wm361812tt.jpg')
+			->thumb(50,50)
+			->save($reloadSavePath . 'img_thumb50x50.jpg', CImageHandler::IMG_JPEG)
+				
+			->reload()
+			->rotate(180)
+			->thumb(100,100)
+			->save($reloadSavePath . 'img_thumb100x100_rotate.jpg', CImageHandler::IMG_JPEG)
+				
+			->reload()
+			->resizeCanvas(100,100,array(255,0,0))
+			->save($reloadSavePath . 'img_thumb100x100_bg.jpg', CImageHandler::IMG_JPEG)
+			
+			->reload()
+			->thumb(100,100)
+			->save($reloadSavePath . 'img_thumb100x100.jpg', CImageHandler::IMG_JPEG);
+		
+		$this->render('imageHandler');
+	}
 
 	/**
 	 * This is the action to handle external exceptions.
