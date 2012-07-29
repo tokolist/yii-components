@@ -4,7 +4,7 @@
  * and then use it for all further generated urls
  * @author Ekstazi http://yii-blog.blogspot.com
  * @author Pelesh Yaroslav aka Tokolist http://tokolist.com
- * @link http://code.google.com/p/yii-components/
+ * @link https://github.com/tokolist/yii-components
  * @version 1.0
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */

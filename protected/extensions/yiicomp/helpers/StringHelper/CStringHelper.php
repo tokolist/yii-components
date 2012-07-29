@@ -2,7 +2,7 @@
 /**
  * CStringHelper
  * @author Pelesh Yaroslav aka Tokolist http://tokolist.com
- * @link http://code.google.com/p/yii-components/
+ * @link https://github.com/tokolist/yii-components
  * @version 1.0
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -91,7 +91,7 @@ class CStringHelper
 	public static function simpleTextFormat($subject)
 	{
 		$subject = trim($subject);
-		$subject = preg_replace('(^|[\r\n]+)([^\r\n]+)([\r\n]+|$)', '<p>$2</p>', $subject);
+		$subject = preg_replace('~([^\r\n]+?)([\r\n]+|$)~', '<p>$1</p>', $subject);
 		return $subject;
 	}
 
