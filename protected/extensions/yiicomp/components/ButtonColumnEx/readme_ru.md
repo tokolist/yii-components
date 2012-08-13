@@ -4,10 +4,10 @@ CButtonColumnEx
 CButtonColumnEx - потомок CButtonColumn, в котором свойство template и свойства options 
 кнопок могут быть php-выражениями.
 
-Installation
-------------
+Подключение
+-----------
 
-1. Скопируйте папку ButtonColumnEx в паку `components`
+1. Скопируйте папку ButtonColumnEx в папку `components`
 
 2. Добавте путь в импорт
 

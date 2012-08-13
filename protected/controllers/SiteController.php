@@ -56,7 +56,12 @@ class SiteController extends Controller
 		
 		$this->render('imageHandler');
 	}
-
+	
+	public function actionJevix()
+	{
+		$this->render('jevix');
+	}
+	
 	/**
 	 * This is the action to handle external exceptions.
 	 */

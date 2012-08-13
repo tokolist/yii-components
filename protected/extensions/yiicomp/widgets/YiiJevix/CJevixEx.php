@@ -13,13 +13,13 @@ require_once(dirname(__FILE__).'/jevix/jevix.class.php');
 class CJevixEx extends Jevix
 {
 	/*
-	 * Loads Jevix config as array
+	 * Loads Jevix config as an array
 	 * @param array $config Config array
 	 */
 	public function loadConfig($config)
 	{
 		if(!is_array($config))
-			throw new Exception('Config must be array');
+			throw new Exception('Config must be an array');
 
 		foreach($config as $paramName=>$paramValue)
 		{

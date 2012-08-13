@@ -24,32 +24,29 @@ class CYiiJevix extends COutputProcessor
 	 */
 	protected $errors=null;
 
-	public function __set($name, $value) {
-		if($name == 'config')
-			$this->setConfig($value);
-	}
-
-	public function __get($name) {
-		if($name == 'errors')
-			return $this->errors;
-	}
-
 	public function setConfig($config)
 	{
+		if($this->jevix !== null)
+			throw new Exception('Config has been already set. Please create another widget instance.');
+		
 		$this->jevix = new CJevixEx();
 		$this->jevix->loadConfig($config);
+	}
+	
+	public function getErrors()
+	{
+		return $this->errors;
 	}
 
 	public function processOutput($output)
 	{
-		$output=$this->parse($output);
-		parent::processOutput($output);
+		parent::processOutput($this->parse($output));
 	}
 
 	public function parse($content)
 	{
 		if($this->jevix === null)
-			throw new Exception('Before parse text set config');
+			throw new Exception('Please set config before text parsing');
 
 		$this->errors = null;
 		return $this->jevix->parse($content, $this->errors);
