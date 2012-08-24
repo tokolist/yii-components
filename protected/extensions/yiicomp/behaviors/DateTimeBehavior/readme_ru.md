@@ -7,7 +7,7 @@ CDateTimeBehavior
 Installation
 ------------
 
-1. Скопируйте директорию DateTimeBehavior в директорию `components`
+1. Скопируйте директорию `DateTimeBehavior` в директорию `components`
 
 2. Добавьте импорт
 

@@ -1,0 +1,6 @@
+- merge all 'text' method parameters except $text into one CImageText class
+- caching
+- Image Magic
+- ambilight thumbs
+- black rectangle issue (png watermark on gif image)
+- original image storage switching (disk or memory)

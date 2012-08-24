@@ -7,7 +7,7 @@ into specified formats between the client and database.
 Installation
 ------------
 
-1. Copy DateTimeBehavior directory to Yii `components` directory
+1. Copy `DateTimeBehavior` directory to Yii `components` directory
 
 2. Add an import path
 
