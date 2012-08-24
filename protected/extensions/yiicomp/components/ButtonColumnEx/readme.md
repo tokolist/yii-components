@@ -1,7 +1,7 @@
 CButtonColumnEx
 ===============
 
-CButtonColumnEx - extended CButtonColumn, in which template and button options 
+`CButtonColumnEx` - extended CButtonColumn, in which template and button options 
 can be php expressions.
 
 Installation

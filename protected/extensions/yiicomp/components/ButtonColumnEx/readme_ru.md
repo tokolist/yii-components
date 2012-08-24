@@ -1,7 +1,7 @@
 CButtonColumnEx
 ===============
 
-CButtonColumnEx - потомок CButtonColumn, в котором свойство template и свойства options 
+`CButtonColumnEx` - потомок CButtonColumn, в котором свойство template и свойства options 
 кнопок могут быть php-выражениями.
 
 Подключение

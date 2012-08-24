@@ -545,7 +545,6 @@ class CImageHandler extends CApplicationComponent
 	
 	public function grayscale()
 	{
-		//$newImage=$this->createImage($this->width, $this->height, $this->trueColor);
 		$newImage = imagecreatetruecolor($this->width, $this->height);
 
 		imagecopy($newImage, $this->image, 0, 0, 0, 0, $this->width, $this->height);
