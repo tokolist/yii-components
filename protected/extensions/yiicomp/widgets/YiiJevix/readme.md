@@ -9,7 +9,7 @@ http://code.google.com/p/jevix/
 Installation
 ------------
 
-1. Copy YiiJevix directory to Yii `components` directory
+1. Copy `YiiJevix` directory to Yii `components` directory
 
 2. Add import path
 
@@ -25,7 +25,7 @@ Installation
 )
 ~~~
 
-3. Use widget in following way
+3. Use widget in the following way
 
 ~~~php
 <?php $this->beginWidget('CYiiJevix', array(

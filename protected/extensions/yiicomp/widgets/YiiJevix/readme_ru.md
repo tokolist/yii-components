@@ -9,7 +9,7 @@ http://code.google.com/p/jevix/
 Подключение
 -----------
 
-1. Скопируйте папку YiiJevix в папку `components`
+1. Скопируйте папку `YiiJevix` в папку `components`
 
 2. Добавьте путь в импорт
 

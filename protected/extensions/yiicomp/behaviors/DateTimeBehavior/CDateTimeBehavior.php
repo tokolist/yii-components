@@ -3,7 +3,7 @@
  * Behaviour for converting date formats between the DB and model
  * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
  * @link https://github.com/tokolist/yii-components
- * @version 1.1
+ * @version 1.2
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -42,7 +42,7 @@ class CDateTimeBehavior extends CActiveRecordBehavior
 			$attributeNames = array_map('trim', explode(',', $attribute[0]));
 			
 			$scenarios = false;
-			if(is_string($attribute['on']))
+			if(isset($attribute['on']) && is_string($attribute['on']))
 			{
 				$scenarios = array_map('trim', explode(',', $attribute['on']));
 			}
@@ -81,6 +81,12 @@ class CDateTimeBehavior extends CActiveRecordBehavior
 	{
 		parent::beforeSave($event);
 		$this->processAttributes($event->sender, self::DIRECTION_DB);
+	}
+	
+	public function afterSave($event)
+	{
+		parent::afterSave($event);
+		$this->processAttributes($event->sender, self::DIRECTION_CLIENT);
 	}
 	
 	public function afterFind($event)
