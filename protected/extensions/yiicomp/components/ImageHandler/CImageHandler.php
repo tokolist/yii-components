@@ -3,7 +3,7 @@
  * Image handler
  * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
  * @link https://github.com/tokolist/yii-components
- * @version 1.1
+ * @version 1.2
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -291,7 +291,7 @@ class CImageHandler extends CApplicationComponent
 
 	}
 
-	public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM)
+	public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false)
 	{
 
 		$this->checkLoaded();
@@ -301,6 +301,23 @@ class CImageHandler extends CApplicationComponent
 
 			$posX = 0;
 			$posY = 0;
+                        
+			$watermarkWidth = $wImg['width'];
+			$watermarkHeight = $wImg['height'];
+
+			if($zoom !== false)
+			{
+				$dimension = round(max($this->width, $this->height) * $zoom);
+
+				$watermarkHeight = $dimension;
+				$watermarkWidth = round($watermarkHeight / $wImg['height'] * $wImg['width']);
+
+				if($watermarkWidth > $dimension)
+				{
+					$watermarkWidth = $dimension;
+					$watermarkHeight = round($watermarkWidth / $wImg['width'] * $wImg['height']);
+				}
+			}
 
 			switch ($corner)
 			{
@@ -309,26 +326,37 @@ class CImageHandler extends CApplicationComponent
 					$posY = $offsetY;
 					break;
 				case self::CORNER_RIGHT_TOP:
-					$posX = $this->width - $wImg['width'] - $offsetX;
+					$posX = $this->width - $watermarkWidth - $offsetX;
 					$posY = $offsetY;
 					break;
 				case self::CORNER_LEFT_BOTTOM:
 					$posX = $offsetX;
-					$posY = $this->height - $wImg['height'] - $offsetY;
+					$posY = $this->height - $watermarkHeight - $offsetY;
 					break;
 				case self::CORNER_RIGHT_BOTTOM:
-					$posX = $this->width - $wImg['width'] - $offsetX;
-					$posY = $this->height - $wImg['height'] - $offsetY;
+					$posX = $this->width - $watermarkWidth - $offsetX;
+					$posY = $this->height - $watermarkHeight - $offsetY;
 					break;
 				case self::CORNER_CENTER:
-					$posX = floor(($this->width - $wImg['width']) / 2);
-					$posY = floor(($this->height - $wImg['height']) / 2);
+					$posX = floor(($this->width - $watermarkWidth) / 2);
+					$posY = floor(($this->height - $watermarkHeight) / 2);
 					break;
 				default:
 					throw new Exception('Invalid $corner value');
 			}
 
-			imagecopy($this->image, $wImg['image'], $posX, $posY, 0, 0, $wImg['width'], $wImg['height']);
+			imagecopyresampled(
+				$this->image,
+				$wImg['image'],
+				$posX,
+				$posY,
+				0,
+				0,
+				$watermarkWidth,
+				$watermarkHeight,
+				$wImg['width'],
+				$wImg['height']
+			);
 
 
 			imagedestroy($wImg['image']);

@@ -43,3 +43,11 @@
 		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/fillBg')); ?></td>
 	</tr>
 </table>
+
+<h2>Watermark</h2>
+
+<table>
+	<tr>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/watermark')); ?></td>
+	</tr>
+</table>

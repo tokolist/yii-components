@@ -159,7 +159,7 @@ Watermark
 ---------
 
 ~~~php
-public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM);
+public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false);
 ~~~
 
 `$watermarkFile` - watermark file path
@@ -170,6 +170,8 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 
 `$corner` - image part to which watermark position is relative. Default value is `self::CORNER_RIGHT_BOTTOM`. Possible options:
 
+`$zoom` - zoom watermark image relatively to the image dimensions (e.g. 0.3). Default value is `false`, which means that watermark image keeps original scale.
+
 * `CORNER_LEFT_TOP` - left top corner
 * `CORNER_RIGHT_TOP` - right top corner
 * `CORNER_LEFT_BOTTOM` - left bottom corner
@@ -179,7 +181,7 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 ~~~php
 Yii::app()->ih
     ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
-    ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM)
+    ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM, 0.3)
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
 ~~~

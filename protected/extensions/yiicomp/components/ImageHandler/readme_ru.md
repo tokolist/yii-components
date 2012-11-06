@@ -159,7 +159,7 @@ Yii::app()->ih
 -------------
 
 ~~~php
-public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM);
+public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false);
 ~~~
 
 `$watermarkFile` - изображение водяного знака, которое будет накладываться
@@ -170,6 +170,8 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 
 `$corner` - от какой части изображения позиционируется водяной знак. По умолчанию `self::CORNER_RIGHT_BOTTOM`. Возможные значения:
 
+`$zoom` - изменить размер вотермарка относительно картинки (например, 0.3). Значение по умолчанию `false`, т.е. картинка сохраняет оригинальные размеры.
+
 * `CORNER_LEFT_TOP` - левый верхний угол
 * `CORNER_RIGHT_TOP` - правый верхний угол
 * `CORNER_LEFT_BOTTOM` - левый нижний угол
@@ -179,7 +181,7 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 ~~~php
 Yii::app()->ih
     ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
-    ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM)
+    ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM, 0.3)
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
 ~~~

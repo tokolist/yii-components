@@ -44,5 +44,13 @@ class ImageHandlerController extends Controller
 			->show();
 	}
 	
+	
+	public function actionWatermark()
+	{
+		Yii::app()->ih->load($this->basePath . 'wm370124tt.jpg')
+			->watermark($this->basePath . 'paypal_512_trimmed.png', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->show();
+	}
+	
 
 }
