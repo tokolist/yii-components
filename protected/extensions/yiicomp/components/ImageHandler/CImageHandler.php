@@ -459,15 +459,13 @@ class CImageHandler extends CApplicationComponent
 	}
 
 	public function text($text, $fontFile, $size=12, $color=array(0, 0, 0),
-		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0)
+		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0)
 	{
 		$this->checkLoaded();
 
 		$bBox = imagettfbbox($size, $angle, $fontFile, $text);
 		$textHeight = $bBox[1] - $bBox[7];
 		$textWidth = $bBox[2] - $bBox[0];
-
-		$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
 
 
 
@@ -497,7 +495,14 @@ class CImageHandler extends CApplicationComponent
 				throw new Exception('Invalid $corner value');
 		}
 
-
+		if($alpha > 0)
+		{
+			$color =  imagecolorallocatealpha($this->image, $color[0], $color[1], $color[2], $alpha);
+		} 
+		else 
+		{
+			$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
+		}
 
 		imagettftext($this->image, $size, $angle, $posX, $posY + $textHeight, $color, $fontFile, $text);
 
