@@ -248,7 +248,7 @@ Text adding
 -----------
 
 ~~~php
-public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0);
+public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0);
 ~~~
 
 `$text` - text
@@ -266,12 +266,18 @@ public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=
 * `CORNER_LEFT_BOTTOM` - left bottom corner
 * `CORNER_RIGHT_BOTTOM` - right bottom corner
 * `CORNER_CENTER` - image middle point
+* `CORNER_CENTER_TOP` - center top point
+* `CORNER_CENTER_BOTTOM` - center bottom point
+* `CORNER_LEFT_CENTER` - left center point
+* `CORNER_RIGHT_CENTER` - right center point
 
 `$offsetX` - horizontal offset
 
 `$offsetY` - vertical offset
 
 `$angle` - angle degrees
+
+`$alpha` - text transparency. Possible value is between 0 and 127. Default value is 0, i.e. completely opaque text
 
 ~~~php
 Yii::app()->ih

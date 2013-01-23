@@ -248,7 +248,7 @@ Yii::app()->ih
 -----------------
 
 ~~~php
-public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0);
+public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0);
 ~~~
 
 `$text` - собственно текст
@@ -266,12 +266,18 @@ public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=
 * `CORNER_LEFT_BOTTOM` - левый нижний угол
 * `CORNER_RIGHT_BOTTOM` - правый нижний угол
 * `CORNER_CENTER` - центр изображения
+* `CORNER_CENTER_TOP` - центр верхней граници
+* `CORNER_CENTER_BOTTOM` - центр нижней граници
+* `CORNER_LEFT_CENTER` - центр левой граници
+* `CORNER_RIGHT_CENTER` - центр правой граници
 
 `$offsetX` - отступ по горизонтали
 
 `$offsetY` - отступ по вертикали
 
 `$angle` - угол поворота текста
+
+`$alpha` - прозрачность текста. Возможные значения 0-127. Значение по умолчанию 0, т.е. полностью непрозрачный текст
 
 ~~~php
 Yii::app()->ih
