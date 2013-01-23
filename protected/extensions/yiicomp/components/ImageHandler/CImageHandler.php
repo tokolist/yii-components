@@ -33,7 +33,10 @@ class CImageHandler extends CApplicationComponent
 	const CORNER_LEFT_BOTTOM = 3;
 	const CORNER_RIGHT_BOTTOM = 4;
 	const CORNER_CENTER = 5;
-
+	const CORNER_CENTER_TOP = 6;
+	const CORNER_CENTER_BOTTOM = 7;
+	const CORNER_LEFT_CENTER = 8;
+	const CORNER_RIGHT_CENTER = 9;
 
 	const FLIP_HORIZONTAL = 1;
 	const FLIP_VERTICAL = 2;
@@ -341,6 +344,22 @@ class CImageHandler extends CApplicationComponent
 					$posX = floor(($this->width - $watermarkWidth) / 2);
 					$posY = floor(($this->height - $watermarkHeight) / 2);
 					break;
+				case self::CORNER_CENTER_TOP:
+					$posX = floor(($this->width - $watermarkWidth) / 2);
+					$posY = $offsetY;
+					break;
+				case self::CORNER_CENTER_BOTTOM:
+					$posX = floor(($this->width - $watermarkWidth) / 2);
+					$posY = $this->height - $watermarkHeight - $offsetY;
+					break;
+				case self::CORNER_LEFT_CENTER:
+					$posX = $offsetX;
+					$posY = floor(($this->height - $watermarkHeight) / 2);
+					break;
+				case self::CORNER_RIGHT_CENTER:
+					$posX = $this->width - $watermarkWidth - $offsetX;
+					$posY = floor(($this->height - $watermarkHeight) / 2);
+					break;					
 				default:
 					throw new Exception('Invalid $corner value');
 			}
@@ -459,15 +478,13 @@ class CImageHandler extends CApplicationComponent
 	}
 
 	public function text($text, $fontFile, $size=12, $color=array(0, 0, 0),
-		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0)
+		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0)
 	{
 		$this->checkLoaded();
 
 		$bBox = imagettfbbox($size, $angle, $fontFile, $text);
 		$textHeight = $bBox[1] - $bBox[7];
 		$textWidth = $bBox[2] - $bBox[0];
-
-		$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
 
 
 
@@ -493,11 +510,34 @@ class CImageHandler extends CApplicationComponent
 				$posX = floor(($this->width - $textWidth) / 2);
 				$posY = floor(($this->height - $textHeight) / 2);
 				break;
+			case self::CORNER_CENTER_TOP:
+				$posX = floor(($this->width - $textWidth) / 2);
+				$posY = $offsetY;
+				break;
+			case self::CORNER_CENTER_BOTTOM:
+				$posX = floor(($this->width - $textWidth) / 2);
+				$posY = $this->height - $textHeight - $offsetY;
+				break;
+			case self::CORNER_LEFT_CENTER:
+				$posX = $offsetX;
+				$posY = floor(($this->height - $textHeight) / 2);
+				break;
+			case self::CORNER_RIGHT_CENTER:
+				$posX = $this->width - $textWidth - $offsetX;
+				$posY = floor(($this->height - $textHeight) / 2);
+				break;				
 			default:
 				throw new Exception('Invalid $corner value');
 		}
 
-
+		if($alpha > 0)
+		{
+			$color =  imagecolorallocatealpha($this->image, $color[0], $color[1], $color[2], $alpha);
+		} 
+		else 
+		{
+			$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
+		}
 
 		imagettftext($this->image, $size, $angle, $posX, $posY + $textHeight, $color, $fontFile, $text);
 
