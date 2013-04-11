@@ -94,6 +94,16 @@ class CImageHandler extends CApplicationComponent
                 return $this;
         }
 
+	private function RGBToHex($r, $g, $b)
+        {
+                //String padding bug found and the solution put forth by Pete Williams (http://snipplr.com/users/PeteW)
+                $hex = "#";
+                $hex.= str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
+                $hex.= str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
+                $hex.= str_pad(dechex($b), 2, "0", STR_PAD_LEFT);
+                return $hex;
+        }
+
 	private function freeImage()
 	{
 		if(is_resource($this->image))
@@ -216,8 +226,8 @@ class CImageHandler extends CApplicationComponent
                 }
                 else
                 {
-                        $this->originalImage = $this->fileName;
-                        $imageInfo = $this->loadImage($this->originalImage);
+                        $this->fileName=$this->originalImage;
+                        $imageInfo = $this->loadImage($this->fileName);
 			$this->width = $imageInfo['width'];
 			$this->height = $imageInfo['height'];
 			$this->mimeType = $imageInfo['mime'];
@@ -247,6 +257,7 @@ class CImageHandler extends CApplicationComponent
                 else
                 {
                         $this->fileName = $file;
+                        $this->originalImage = $this->fileName;
                         $this->initImage();
                         return $this;
                 }
@@ -651,13 +662,14 @@ class CImageHandler extends CApplicationComponent
                 }
                 else
                 {
-                        $this->engineExec=$this->engineIMConvert." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill black text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";
+                        $hex=$this->RGBToHex($color[0],$color[1],$color[2]);
+                        $this->engineExec=$this->engineIMConvert." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill '".$hex."' text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";
                 }
 
 		return $this;
 	}
 
-	public function adaptiveThumb($width, $height)
+	public function adaptiveThumb($width, $height, $backgroundColor=array(0, 0, 0))
 	{
                 Yii::log('CImageHandler::adaptiveThumb: ', "trace", "system.*");
 
@@ -686,7 +698,8 @@ class CImageHandler extends CApplicationComponent
                 }
                 else
                 {
-                        $this->engineExec=$this->engineIMConvert." -quiet -strip -define jpeg:size=".$width."x".$height." ".$this->fileName." -thumbnail '".$width."x".$height.">' -gravity center -extent ".$width."x".$height." %dest%";
+                        $hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
+                        $this->engineExec=$this->engineIMConvert." -quiet -strip -define jpeg:size=".$width."x".$height." ".$this->fileName." -thumbnail '".$width."x".$height.">' -background '".$hex."' -gravity center -extent ".$width."x".$height." %dest%";
                 }
 
 		return $this;
@@ -698,37 +711,44 @@ class CImageHandler extends CApplicationComponent
 
 		$this->checkLoaded();
 
-		$newWidth = min($toWidth, $this->width);
-		$newHeight = min($toHeight, $this->height);
+                if($this->engine=='GD')
+                {
+        		$newWidth = min($toWidth, $this->width);
+        		$newHeight = min($toHeight, $this->height);
 
-		$widthProportion = $newWidth / $this->width;
-		$heightProportion = $newHeight / $this->height;
+        		$widthProportion = $newWidth / $this->width;
+        		$heightProportion = $newHeight / $this->height;
 
-		if($widthProportion < $heightProportion)
-		{
-			$newHeight = round($widthProportion * $this->height);
-		}
-		else
-		{
-			$newWidth = round($heightProportion * $this->width);
-		}
+        		if($widthProportion < $heightProportion)
+        		{
+        			$newHeight = round($widthProportion * $this->height);
+        		}
+        		else
+        		{
+        			$newWidth = round($heightProportion * $this->width);
+        		}
 
-		$posX = floor(($toWidth - $newWidth) / 2);
-		$posY = floor(($toHeight - $newHeight) / 2);
+        		$posX = floor(($toWidth - $newWidth) / 2);
+        		$posY = floor(($toHeight - $newHeight) / 2);
 
+                        $newImage = imagecreatetruecolor($toWidth, $toHeight);
 
-		$newImage = imagecreatetruecolor($toWidth, $toHeight);
+        		$backgroundColor = imagecolorallocate($newImage, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
+        		imagefill($newImage, 0, 0, $backgroundColor);
 
-		$backgroundColor = imagecolorallocate($newImage, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
-		imagefill($newImage, 0, 0, $backgroundColor);
+        		imagecopyresampled($newImage, $this->image, $posX, $posY, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
 
-		imagecopyresampled($newImage, $this->image, $posX, $posY, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
+        		imagedestroy($this->image);
 
-		imagedestroy($this->image);
-
-		$this->image = $newImage;
-		$this->width = $toWidth;
-		$this->height = $toHeight;
+        		$this->image = $newImage;
+        		$this->width = $toWidth;
+        		$this->height = $toHeight;
+                }
+                else
+                {
+                        $hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
+                        $this->engineExec=$this->engineIMConvert." -quiet -strip -define jpeg:size=".$toWidth."x".$toHeight." ".$this->fileName." -thumbnail '".$toWidth."x".$toHeight.">' -background '".$hex."' -gravity center -extent ".$toWidth."x".$toHeight." %dest%";
+                }
 
 		return $this;
 	}
@@ -737,14 +757,21 @@ class CImageHandler extends CApplicationComponent
 	{
                 Yii::log('CImageHandler::grayscale: ', "trace", "system.*");
 
-		$newImage = imagecreatetruecolor($this->width, $this->height);
+                if($this->engine=='GD')
+                {
+        		$newImage = imagecreatetruecolor($this->width, $this->height);
 
-		imagecopy($newImage, $this->image, 0, 0, 0, 0, $this->width, $this->height);
-		imagecopymergegray($newImage, $newImage, 0, 0, 0, 0, $this->width, $this->height, 0);
+        		imagecopy($newImage, $this->image, 0, 0, 0, 0, $this->width, $this->height);
+        		imagecopymergegray($newImage, $newImage, 0, 0, 0, 0, $this->width, $this->height, 0);
 
-		imagedestroy($this->image);
+        		imagedestroy($this->image);
 
-		$this->image = $newImage;
+        		$this->image = $newImage;
+                }
+                else
+                {
+                        $this->engineExec=$this->engineIMConvert." -colorspace Gray ".$this->fileName." %dest%";
+                }
 
 		return $this;
 	}
@@ -823,10 +850,31 @@ class CImageHandler extends CApplicationComponent
                 }
                 else
                 {
-                        //$this->engineExec=str_replace('%dest%'," -quality ".$jpegQuality." ".$file,$this->engineExec);
-                        $this->engineExec=str_replace('%dest%',$file,$this->engineExec);
+        		if (!$toFormat)
+        		{
+        			$toFormat = $this->format;
+        		}
+
+        		switch ($toFormat)
+        		{
+        			case self::IMG_GIF:
+                                        $format="GIF";
+        				break;
+        			case self::IMG_JPEG:
+                                        $format="JPG";
+        				break;
+        			case self::IMG_PNG:
+                                        $format="PNG";
+        				break;
+        			default:
+        				throw new Exception('Invalid image format for save');
+        		}
+                        $path_parts = pathinfo($file);
+                        $file=$path_parts['dirname'].DIRECTORY_SEPARATOR.$path_parts['filename'].'.'.strtolower($format);
+                        $this->engineExec=str_replace('%dest%',' -quality '.$jpegQuality.' '.$format.':'.$file,$this->engineExec);
                         Yii::log('CImageHandler: '.$this->engineExec, "trace", "system.*");
                         exec($this->engineExec);
+                        $this->fileName=$file;
                 }
 
 		if ($touch && $file != $this->fileName)
@@ -836,5 +884,6 @@ class CImageHandler extends CApplicationComponent
 
 		return $this;
 	}
+
 
 }
