@@ -53,6 +53,8 @@
  */
 class CImageHandler extends CApplicationComponent
 {
+	private $driver = null;
+	
 	private $originalImage = null;
 	private $image = null;
 
@@ -177,71 +179,24 @@ class CImageHandler extends CApplicationComponent
 
 	private function loadImage($file)
 	{
-                Yii::log('CImageHandler::loadImage: '.$file, "trace", "system.*");
+		Yii::log('CImageHandler::loadImage: '.$file, "trace", "system.*");
 
 		$result = array();
 
-                if($this->engine=='GD')
-                {
-                        if ($imageInfo = @getimagesize($file))
-        		{
-        			$result['width'] = $imageInfo[0];
-        			$result['height'] = $imageInfo[1];
-        			$result['mimeType'] = $imageInfo['mime'];
-
-        			switch ($result['format'] = $imageInfo[2])
-        			{
-        				case self::IMG_GIF:
-        					if ($result['image'] = imagecreatefromgif($file))
-        					{
-        						return $result;
-        					}
-        					else
-        					{
-        						throw new Exception('Invalid image gif format');
-        					}
-        					break;
-        				case self::IMG_JPEG:
-        					if ($result['image'] = imagecreatefromjpeg($file))
-        					{
-        						return $result;
-        					}
-        					else
-        					{
-        						throw new Exception('Invalid image jpeg format');
-        					}
-        					break;
-        				case self::IMG_PNG:
-        					if ($result['image'] = imagecreatefrompng($file))
-        					{
-        						return $result;
-        					}
-        					else
-        					{
-        						throw new Exception('Invalid image png format');
-        					}
-        					break;
-        		  		default:
-          					throw new Exception('Not supported image format');
-        	  		}
-          		}
-          		else
-          		{
-          			throw new Exception('Invalid image file');
-          		}
-                }
-                else
-                {
-                        if(!file_exists($file))
-                                throw new Exception("File {$file} not found");
-
-                        $imageInfo = @getimagesize($file);
+		if ($imageInfo = @getimagesize($file))
+		{
 			$result['width'] = $imageInfo[0];
 			$result['height'] = $imageInfo[1];
 			$result['mimeType'] = $imageInfo['mime'];
-                        $result['format'] = $imageInfo[2];
-                        return $result;
-                }
+			$result['format'] = $imageInfo[2];
+			$result['image'] = $this->driver->loadImage($file, $result['format']);
+			
+			return $result;
+		}
+		else
+		{
+			throw new Exception('Invalid image file');
+		}
 	}
 
 	protected function initImage($image = false)
