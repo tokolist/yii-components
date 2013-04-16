@@ -1,7 +1,7 @@
 <?php
 /**
- * This extension allows you to pass the application language via the url
- * and then use it for all further generated urls
+ * This extension allows you to pass the application language via the URL
+ * and then use it for all further generated URLs
  * @author Ekstazi http://yii-blog.blogspot.com
  * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
  * @link https://github.com/tokolist/yii-components

@@ -51,3 +51,20 @@
 		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/watermark')); ?></td>
 	</tr>
 </table>
+
+<h2>PNG</h2>
+
+<table style="background: #f00;">
+	<tr>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark')); ?></td>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark2')); ?></td>
+	</tr>
+	<tr>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark3')); ?></td>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark4')); ?></td>
+	</tr>
+	<tr>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark5')); ?></td>
+		<td><?php echo CHtml::image(Yii::app()->createUrl('imageHandler/pngWatermark6')); ?></td>
+	</tr>
+</table>

@@ -52,5 +52,51 @@ class ImageHandlerController extends Controller
 			->show();
 	}
 	
-
+	public function actionPngWatermark()
+	{
+		Yii::app()->ih->load($this->basePath . 'paypal_512_trimmed.png')
+			->watermark($this->basePath . 'paypal_512_trimmed.png', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show();
+	}
+	
+	public function actionPngWatermark2()
+	{
+		Yii::app()->ih->load($this->basePath . 'paypal_512_trimmed.png')
+			->watermark($this->basePath . 'wm370124tt.jpg', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show();
+	}
+	
+	public function actionPngWatermark3()
+	{
+		Yii::app()->ih->load($this->basePath . 'paypal_512_trimmed.png')
+			->watermark($this->basePath . 'rabbit.gif', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show();
+	}
+	
+	public function actionPngWatermark4()
+	{
+		Yii::app()->ih->load($this->basePath . 'rabbit.gif')
+			->watermark($this->basePath . 'paypal_512_trimmed.png', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show();
+	}
+	
+	public function actionPngWatermark5()
+	{
+		Yii::app()->ih->load($this->basePath . 'wm370124tt.jpg')
+			->watermark($this->basePath . 'rabbit.gif', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show(CImageHandler::IMG_PNG);
+	}
+	
+	public function actionPngWatermark6()
+	{
+		Yii::app()->ih->load($this->basePath . 'rabbit.gif')
+			->watermark($this->basePath . 'wm370124tt.jpg', 10, 10, CImageHandler::CORNER_RIGHT_TOP, 0.2)
+			->thumb(400,400)
+			->show(CImageHandler::IMG_PNG);
+	}
 }
