@@ -68,11 +68,6 @@ class CImageHandler extends CApplicationComponent
 
 	public $transparencyColor = array(0, 0, 0);
 
-        private $engine='GD';//kosenka
-        private $engineIMConvert;//kosenka
-        private $engineIMComposite;//kosenka
-        private $engineExec;//kosenka
-
 	const IMG_GIF = 1;
 	const IMG_JPEG = 2;
 	const IMG_PNG = 3;
@@ -122,22 +117,24 @@ class CImageHandler extends CApplicationComponent
 	{
 		$this->freeImage();
 	}
-
-        public function engine($engine='GD',$engineIMConvert='/usr/bin/convert',$engineIMComposite='/usr/bin/composite')
-        {
-		$this->engine=$engine;
-                $this->engineIMConvert=$engineIMConvert;
-                $this->engineIMComposite=$engineIMComposite;
-
-                if($this->engine=='IM')
-                {
-                        if(empty($this->engineIMConvert))
-                                throw new Exception('ImageMagick::convert not set');
-                        if(empty($this->engineIMComposite))
-                                throw new Exception('ImageMagick::composite not set');
-                }
-                return $this;
-        }
+	
+	public function __construct($driver, $driverOptions=array()) {
+		if(empty($driver))
+		{
+			throw new Exception('Invalid driver name');
+		}
+		
+		$driverClassName = "C{$driver}ImageHandlerDriver";
+		require "drivers\\$driverClassName.php";
+		$this->driver = new $driverClassName($this);
+		
+		foreach($driverOptions as $option => $value)
+		{
+			$this->driver->{$option} = $value;
+		}
+		
+		return $this;
+	}
 
 	private function freeImage()
 	{
