@@ -56,7 +56,6 @@ class CImageHandler extends CApplicationComponent
 	private $driver = null;
 	
 	private $originalImage = null;
-	private $image = null;
 
 	private $format = 0;
 
@@ -201,37 +200,19 @@ class CImageHandler extends CApplicationComponent
 
 	protected function initImage($image = false)
 	{
-                Yii::log('CImageHandler::initImage: ', "trace", "system.*");
+		Yii::log('CImageHandler::initImage: ', "trace", "system.*");
+		
+		if($image === false)
+		{
+			$image = $this->originalImage;
+		}
 
-                if($this->engine=='GD')
-                {
-        		if($image === false)
-        		{
-        			$image = $this->originalImage;
-        		}
+		$this->width = $image['width'];
+		$this->height = $image['height'];
+		$this->mimeType = $image['mimeType'];
+		$this->format = $image['format'];
 
-        		$this->width = $image['width'];
-        		$this->height = $image['height'];
-        		$this->mimeType = $image['mimeType'];
-        		$this->format = $image['format'];
-
-        		//Image
-        		if(is_resource($this->image))
-        			imagedestroy($this->image);
-
-        		$this->image = imagecreatetruecolor($this->width, $this->height);
-        		$this->preserveTransparency($this->image);
-        		imagecopy($this->image, $image['image'], 0, 0, 0, 0, $this->width, $this->height);
-                }
-                else
-                {
-                        $this->fileName=$this->originalImage;
-                        $imageInfo = $this->loadImage($this->fileName);
-			$this->width = $imageInfo['width'];
-			$this->height = $imageInfo['height'];
-			$this->mimeType = $imageInfo['mime'];
-                        $this->format = $imageInfo['format'];
-                }
+		$this->driver->initImage($image);
 	}
 
 	public function load($file)
@@ -264,44 +245,12 @@ class CImageHandler extends CApplicationComponent
 
 	public function reload()
 	{
-                Yii::log('CImageHandler::reload: ', "trace", "system.*");
+		Yii::log('CImageHandler::reload: ', "trace", "system.*");
 
 		$this->checkLoaded();
 		$this->initImage();
 
 		return $this;
-	}
-
-	private function preserveTransparency($newImage)
-	{
-		switch($this->format)
-		{
-			case self::IMG_GIF:
-				$color = imagecolorallocate(
-					$newImage,
-					$this->transparencyColor[0],
-					$this->transparencyColor[1],
-					$this->transparencyColor[2]
-				);
-
-				imagecolortransparent($newImage, $color);
-				imagetruecolortopalette($newImage, false, 256);
-				break;
-			case self::IMG_PNG:
-    			imagealphablending($newImage, false);
-
-				$color = imagecolorallocatealpha (
-					$newImage,
-					$this->transparencyColor[0],
-					$this->transparencyColor[1],
-					$this->transparencyColor[2],
-					0
-    			);
-
-				imagefill($newImage, 0, 0, $color);
-    			imagesavealpha($newImage, true);
-				break;
-		}
 	}
 
 	public function resize($toWidth, $toHeight, $proportional = true)

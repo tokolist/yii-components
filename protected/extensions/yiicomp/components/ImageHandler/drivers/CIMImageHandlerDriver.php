@@ -12,4 +12,9 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		
 		return null;
 	}
+	
+	public function initImage($image = false)
+	{
+		//do nothing
+	}
 }
