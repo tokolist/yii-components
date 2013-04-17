@@ -107,7 +107,7 @@ class CImageHandler extends CApplicationComponent
 
 		$result = array();
 
-		if ($imageInfo = @getimagesize($file))
+		if(($imageInfo = @getimagesize($file)))
 		{
 			$result['width'] = $imageInfo[0];
 			$result['height'] = $imageInfo[1];
@@ -162,8 +162,8 @@ class CImageHandler extends CApplicationComponent
 	{
 		Yii::log('CImageHandler::reload: ', "trace", "system.*");
 
-		$this->driver->checkLoaded();
-		$this->driver->initImage();
+		$this->checkLoaded();
+		$this->initImage();
 
 		return $this;
 	}
@@ -172,7 +172,7 @@ class CImageHandler extends CApplicationComponent
 	{
 		Yii::log('CImageHandler::resize: ', "trace", "system.*");
 
-		$this->driver->checkLoaded();
+		$this->checkLoaded();
 
 		$toWidth = $toWidth !== false ? $toWidth : $this->width;
 		$toHeight = $toHeight !== false ? $toHeight : $this->height;
@@ -202,7 +202,7 @@ class CImageHandler extends CApplicationComponent
 	{
 		Yii::log('CImageHandler::thumb: ', "trace", "system.*");
 
-		$this->driver->checkLoaded();
+		$this->checkLoaded();
 
 		if($toWidth !== false)
 			$toWidth = min($toWidth, $this->width);
@@ -220,7 +220,7 @@ class CImageHandler extends CApplicationComponent
 	{
 		Yii::log('CImageHandler::watermark: ', "trace", "system.*");
 
-		$this->driver->checkLoaded();
+		$this->checkLoaded();
 
 		if($wImg = $this->loadImage($watermarkFile))
 		{
@@ -289,7 +289,7 @@ class CImageHandler extends CApplicationComponent
 					throw new Exception('Invalid $corner value');
 			}
 			
-			$this->driver->watermark();
+			$this->driver->watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner);
 			
 			return $this;
 		}
@@ -302,7 +302,7 @@ class CImageHandler extends CApplicationComponent
 
 	public function flip($mode)
 	{
-                Yii::log('CImageHandler::flip: ', "trace", "system.*");
+		Yii::log('CImageHandler::flip: ', "trace", "system.*");
 
 		$this->checkLoaded();
 

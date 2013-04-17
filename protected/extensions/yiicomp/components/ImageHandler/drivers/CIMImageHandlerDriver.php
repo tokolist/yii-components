@@ -15,7 +15,9 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	public $convertPath = '/usr/bin/convert';
 	public $compositePath = '/usr/bin/composite';
 	protected $commandString;
-	
+	protected $fileName = '';
+
+
 	public function __construct($imageHandler) {
 		parent::__construct();
 		
@@ -54,22 +56,22 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 			throw new Exception("File {$file} not found");
 		}
 		
-		return null;
+		return $file;
 	}
 	
 	public function initImage($image = false)
 	{
-		//do nothing
+		$this->fileName = $image['image'];
 	}
 	
 	public function freeImage()
 	{
-		//do nothing
+		$this->fileName = '';
 	}
 	
 	public function checkLoaded()
 	{
-		//TODO
+		return !empty($this->fileName);
 	}
 	
 	public function resize($toWidth, $toHeight)
@@ -77,10 +79,15 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		$this->commandString = $this->convertPath . " -quiet -strip -resize " . $newWidth . "x" . $newHeight . " " . $this->fileName . " %dest%";
 	}
 	
-	public function watermark() {
-		if($corner==self::CORNER_TILE)
-			$this->engineExec=$this->engineIMComposite." -quiet -dissolve 25 -tile ".$watermarkFile." ".$this->fileName." %dest%";
+	public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner)
+	{
+		if($corner == self::CORNER_TILE)
+		{
+			$this->commandString = $this->compositePath." -quiet -dissolve 25 -tile ".$watermarkFile." ".$this->fileName." %dest%";
+		}
 		else
-			$this->engineExec=$this->engineIMConvert." -quiet ".$this->fileName." ".$watermarkFile." -geometry +".$posX."+".$posY." -composite %dest%";
+		{
+			$this->commandString = $this->convertPath." -quiet ".$this->fileName." ".$watermarkFile." -geometry +".$posX."+".$posY." -composite %dest%";
+		}
 	}
 }

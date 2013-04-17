@@ -131,7 +131,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->height = $newHeight;
 	}
 	
-	public function watermark()
+	public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner)
 	{
 		imagecopyresampled(
 			$this->image,
