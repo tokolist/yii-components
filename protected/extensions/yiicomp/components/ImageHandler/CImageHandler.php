@@ -54,19 +54,12 @@
 class CImageHandler extends CApplicationComponent
 {
 	private $driver = null;
-	
 	private $originalImage = null;
-
 	private $format = 0;
-
 	private $width = 0;
 	private $height = 0;
-
 	private $mimeType = '';
-
 	private $fileName = '';
-
-	public $transparencyColor = array(0, 0, 0);
 
 	const IMG_GIF = 1;
 	const IMG_JPEG = 2;
@@ -81,7 +74,7 @@ class CImageHandler extends CApplicationComponent
 	const CORNER_CENTER_BOTTOM = 7;
 	const CORNER_LEFT_CENTER = 8;
 	const CORNER_RIGHT_CENTER = 9;
-        const CORNER_TILE = 10;
+	const CORNER_TILE = 10;
 
 	const FLIP_HORIZONTAL = 1;
 	const FLIP_VERTICAL = 2;
@@ -138,26 +131,14 @@ class CImageHandler extends CApplicationComponent
 
 	private function freeImage()
 	{
-		if(is_resource($this->image))
-		{
-			imagedestroy($this->image);
-		}
-
-		if($this->originalImage !== null)
-		{
-			if(is_resource($this->originalImage['image']))
-			{
-				imagedestroy($this->originalImage['image']);
-			}
-			$this->originalImage = null;
-		}
+		$this->driver->freeImage();
 	}
 
 	private function checkLoaded()
 	{
-                Yii::log('CImageHandler::checkLoaded: ', "trace", "system.*");
+		Yii::log('CImageHandler::checkLoaded: ', "trace", "system.*");
 
-		if ($this->engine=='GD' and !is_resource($this->image))
+		if(!$this->driver->checkLoaded())
 		{
 			throw new Exception('Load image first');
 		}
@@ -224,17 +205,17 @@ class CImageHandler extends CApplicationComponent
 	{
 		Yii::log('CImageHandler::reload: ', "trace", "system.*");
 
-		$this->checkLoaded();
-		$this->initImage();
+		$this->driver->checkLoaded();
+		$this->driver->initImage();
 
 		return $this;
 	}
 
 	public function resize($toWidth, $toHeight, $proportional = true)
 	{
-                Yii::log('CImageHandler::resize: ', "trace", "system.*");
+		Yii::log('CImageHandler::resize: ', "trace", "system.*");
 
-		$this->checkLoaded();
+		$this->driver->checkLoaded();
 
 		$toWidth = $toWidth !== false ? $toWidth : $this->width;
 		$toHeight = $toHeight !== false ? $toHeight : $this->height;
@@ -254,29 +235,17 @@ class CImageHandler extends CApplicationComponent
 			$newWidth = $toWidth;
 			$newHeight = $toHeight;
 		}
-
-                if($this->engine=='GD')
-                {
-        		$newImage = imagecreatetruecolor($newWidth, $newHeight);
-        		$this->preserveTransparency($newImage);
-        		imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
-        		imagedestroy($this->image);
-        		$this->image = $newImage;
-        		$this->width = $newWidth;
-        		$this->height = $newHeight;
-                        return $this;
-                }
-                else
-                {
-                        $this->engineExec=$this->engineIMConvert." -quiet -strip -resize ".$newWidth."x".$newHeight." ".$this->fileName." %dest%";
-                }
+		
+		$this->driver->resize($toWidth, $toHeight);
+		
+		return $this;
 	}
 
 	public function thumb($toWidth, $toHeight, $proportional = true)
 	{
-                Yii::log('CImageHandler::thumb: ', "trace", "system.*");
+		Yii::log('CImageHandler::thumb: ', "trace", "system.*");
 
-		$this->checkLoaded();
+		$this->driver->checkLoaded();
 
 		if($toWidth !== false)
 			$toWidth = min($toWidth, $this->width);
@@ -288,16 +257,15 @@ class CImageHandler extends CApplicationComponent
 		$this->resize($toWidth, $toHeight, $proportional);
 
 		return $this;
-
 	}
 
 	public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false)
 	{
-                Yii::log('CImageHandler::watermark: ', "trace", "system.*");
+		Yii::log('CImageHandler::watermark: ', "trace", "system.*");
 
-		$this->checkLoaded();
+		$this->driver->checkLoaded();
 
-		if ($wImg = $this->loadImage($watermarkFile))
+		if($wImg = $this->loadImage($watermarkFile))
 		{
 			$posX = 0;
 			$posY = 0;
@@ -305,7 +273,7 @@ class CImageHandler extends CApplicationComponent
 			$watermarkWidth = $wImg['width'];
 			$watermarkHeight = $wImg['height'];
 
-			if($this->engine=='GD' and $zoom !== false)
+			if($zoom !== false)
 			{
 				$dimension = round(max($this->width, $this->height) * $zoom);
 
@@ -358,36 +326,14 @@ class CImageHandler extends CApplicationComponent
 					$posX = $this->width - $watermarkWidth - $offsetX;
 					$posY = floor(($this->height - $watermarkHeight) / 2);
 					break;
-                                case self::CORNER_TILE:
-                                        break;
+				case self::CORNER_TILE:
+					break;
 				default:
 					throw new Exception('Invalid $corner value');
 			}
-
-                        if($this->engine=='GD')
-                        {
-                		imagecopyresampled(
-                			$this->image,
-                			$wImg['image'],
-                			$posX,
-                			$posY,
-                			0,
-                			0,
-                			$watermarkWidth,
-                			$watermarkHeight,
-                			$wImg['width'],
-                			$wImg['height']
-                		);
-                		imagedestroy($wImg['image']);
-                        }
-                        else
-                        {
-                                if($corner==self::CORNER_TILE)
-                                        $this->engineExec=$this->engineIMComposite." -quiet -dissolve 25 -tile ".$watermarkFile." ".$this->fileName." %dest%";
-                                else
-                                        $this->engineExec=$this->engineIMConvert." -quiet ".$this->fileName." ".$watermarkFile." -geometry +".$posX."+".$posY." -composite %dest%";
-                        }
-
+			
+			$this->driver->watermark();
+			
 			return $this;
 		}
 		else

@@ -10,4 +10,8 @@ abstract class CImageHandlerDriver
 
 	abstract public function loadImage($file, $format);
 	abstract public function initImage($image = false);
+	abstract public function freeImage();
+	abstract public function checkLoaded();
+	abstract public function resize($toWidth, $toHeight);
+	abstract public function watermark();
 }
