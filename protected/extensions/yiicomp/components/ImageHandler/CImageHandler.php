@@ -2,55 +2,12 @@
 /**
  * Image handler
  * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
+ * @author Kosenka https://github.com/kosenka
  * @link https://github.com/tokolist/yii-components
- * @version 1.2
+ * @version 2.0
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-/**
- * how to use:
- *                Yii::import('ext.CImageHandler');
-                $ih = new CImageHandler(); //Инициализация
-                $ih->engine('IM')//будем использовать ImageMagick
-                ->load($userFolder.$userFile) //Загрузка оригинала картинки
-                ->resizeCanvas(600,600,array(255,255,255)) //Создание превьюшки шириной 200px
-                ->save($userFolder.'200x_resizeCanvas_'.$userFile) //Сохранение превьюшки в папку thumbs
-                ->reload() //Снова загрузка оригинала картинки
-                ->thumb('50', '50') //Создание превьюшки размером 50px
-                ->save($userFolder.'50x50_'.$userFile) //Сохранение превьюшки в папку thumbs_small
-                ->reload()//Снова загрузка оригинала картинки
-                ->thumb('800', '800') //Создание превьюшки размером 800px
-                ->save($userFolder.'800x800_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->flip(CImageHandler::FLIP_HORIZONTAL) //Создание превьюшки размером 800px
-                ->save($userFolder.'flipH_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->flip(CImageHandler::FLIP_VERTICAL) //Создание превьюшки размером 800px
-                ->save($userFolder.'flipV_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->flip(CImageHandler::FLIP_BOTH) //Создание превьюшки размером 800px
-                ->save($userFolder.'flipB_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->rotate(-90)
-                ->save($userFolder.'rotate-90_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/wmark_image.png', 10, 20, CImageHandler::CORNER_TILE)
-                ->save($userFolder.'water_'.$userFile)
-                ->reload()//Снова загрузка оригинала картинки
-                ->grayscale()
-                ->save($userFolder.'grayscale_'.$userFile)
-                ->reload()
-                ->crop(100, 100, 10, 10)
-                ->save($userFolder.'crop_'.$userFile)
-                ->reload()
-                ->text('Hello!', $_SERVER['DOCUMENT_ROOT'] . '/upload/georgia.ttf', 20, array(0,0,0), CImageHandler::CORNER_CENTER, 10, 10)
-                ->save($userFolder.'text_'.$userFile)
-                ->reload()
-                ->adaptiveThumb(50, 50, array(0,0,0))
-                save($userFolder.'im_adaptiveThumb_'.$userFile)
-                ;
-
- */
 class CImageHandler extends CApplicationComponent
 {
 	private $driver = null;
