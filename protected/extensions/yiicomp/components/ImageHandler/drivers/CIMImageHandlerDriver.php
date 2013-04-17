@@ -90,4 +90,22 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 			$this->commandString = $this->convertPath." -quiet ".$this->fileName." ".$watermarkFile." -geometry +".$posX."+".$posY." -composite %dest%";
 		}
 	}
+	
+	public function flip($mode)
+	{
+		switch($mode)
+		{
+			case self::FLIP_HORIZONTAL:
+				$this->commandString = $this->convertPath." -flop ".$this->fileName." %dest%";
+				break;
+			case self::FLIP_VERTICAL:
+				$this->commandString = $this->convertPath." -flip ".$this->fileName." %dest%";
+				break;
+			case self::FLIP_BOTH:
+				$this->commandString = $this->convertPath." -flop -flip ".$this->fileName." %dest%";
+				break;
+			default:
+				throw new Exception('Invalid $mode value');
+		}
+	}
 }

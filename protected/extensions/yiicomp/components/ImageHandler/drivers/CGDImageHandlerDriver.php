@@ -148,4 +148,42 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		
 		imagedestroy($wImg['image']);
 	}
+	
+	public function flip($mode)
+	{
+		$srcX = 0;
+		$srcY = 0;
+		
+		$width = $this->imageHandler->getWidth();
+		$height = $this->imageHandler->getHeight();
+		
+		$srcWidth = $width;
+		$srcHeight = $height;
+
+		switch ($mode)
+		{
+			case self::FLIP_HORIZONTAL:
+				$srcX = $width - 1;
+				$srcWidth = -$width;
+				break;
+			case self::FLIP_VERTICAL:
+				$srcY = $height - 1;
+				$srcHeight = -$height;
+				break;
+			case self::FLIP_BOTH:
+				$srcX = $width - 1;
+				$srcY = $height - 1;
+				$srcWidth = -$width;
+				$srcHeight = -$height;
+				break;
+			default:
+				throw new Exception('Invalid $mode value');
+		}
+
+		$newImage = imagecreatetruecolor($width, $height);
+		$this->preserveTransparency($newImage);
+		imagecopyresampled($newImage, $this->image, 0, 0, $srcX, $srcY, $width, $height, $srcWidth, $srcHeight);
+		imagedestroy($this->image);
+		$this->image = $newImage;
+	}
 }

@@ -22,4 +22,5 @@ abstract class CImageHandlerDriver
 	abstract public function checkLoaded();
 	abstract public function resize($toWidth, $toHeight);
 	abstract public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner);
+	abstract public function flip($mode);
 }

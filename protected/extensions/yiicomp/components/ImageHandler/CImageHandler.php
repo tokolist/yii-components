@@ -305,59 +305,8 @@ class CImageHandler extends CApplicationComponent
 		Yii::log('CImageHandler::flip: ', "trace", "system.*");
 
 		$this->checkLoaded();
-
-                if($this->engine=='GD')
-                {
-        		$srcX = 0;
-        		$srcY = 0;
-        		$srcWidth = $this->width;
-        		$srcHeight = $this->height;
-
-        		switch ($mode)
-        		{
-        			case self::FLIP_HORIZONTAL:
-        				$srcX = $this->width - 1;
-        				$srcWidth = -$this->width;
-        				break;
-        			case self::FLIP_VERTICAL:
-        				$srcY = $this->height - 1;
-        				$srcHeight = -$this->height;
-        				break;
-        			case self::FLIP_BOTH:
-        				$srcX = $this->width - 1;
-        				$srcY = $this->height - 1;
-        				$srcWidth = -$this->width;
-        				$srcHeight = -$this->height;
-        				break;
-        			default:
-        				throw new Exception('Invalid $mode value');
-        		}
-
-        		$newImage = imagecreatetruecolor($this->width, $this->height);
-        		$this->preserveTransparency($newImage);
-        		imagecopyresampled($newImage, $this->image, 0, 0, $srcX, $srcY, $this->width, $this->height, $srcWidth, $srcHeight);
-        		imagedestroy($this->image);
-        		$this->image = $newImage;
-        		//dimensions not changed
-                }
-                else
-                {
-        		switch ($mode)
-        		{
-        			case self::FLIP_HORIZONTAL:
-                                        $this->engineExec=$this->engineIMConvert." -flop ".$this->fileName." %dest%";
-        				break;
-        			case self::FLIP_VERTICAL:
-                                        $this->engineExec=$this->engineIMConvert." -flip ".$this->fileName." %dest%";
-        				break;
-        			case self::FLIP_BOTH:
-                                        $this->engineExec=$this->engineIMConvert." -flop -flip ".$this->fileName." %dest%";
-        				break;
-        			default:
-        				throw new Exception('Invalid $mode value');
-        		}
-                }
-
+		$this->driver->flip($mode);
+		
 		return $this;
 	}
 
