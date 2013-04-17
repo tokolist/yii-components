@@ -139,16 +139,6 @@ class CImageHandler extends CApplicationComponent
                 return $this;
         }
 
-	private function RGBToHex($r, $g, $b)
-        {
-                //String padding bug found and the solution put forth by Pete Williams (http://snipplr.com/users/PeteW)
-                $hex = "#";
-                $hex.= str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
-                $hex.= str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
-                $hex.= str_pad(dechex($b), 2, "0", STR_PAD_LEFT);
-                return $hex;
-        }
-
 	private function freeImage()
 	{
 		if(is_resource($this->image))
@@ -217,30 +207,20 @@ class CImageHandler extends CApplicationComponent
 
 	public function load($file)
 	{
-                Yii::log('CImageHandler::load: '.$file, "trace", "system.*");
+		Yii::log('CImageHandler::load: '.$file, "trace", "system.*");
 
-                if($this->engine=='GD')
-                {
-        		$this->freeImage();
+		$this->freeImage();
 
-        		if(($this->originalImage = $this->loadImage($file)))
-        		{
-        			$this->initImage();
-        			$this->fileName = $file;
-        			return $this;
-        		}
-        		else
-        		{
-        			return false;
-        		}
-                }
-                else
-                {
-                        $this->fileName = $file;
-                        $this->originalImage = $this->fileName;
-                        $this->initImage();
-                        return $this;
-                }
+		if(($this->originalImage = $this->loadImage($file)))
+		{
+			$this->initImage();
+			$this->fileName = $file;
+			return $this;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public function reload()
