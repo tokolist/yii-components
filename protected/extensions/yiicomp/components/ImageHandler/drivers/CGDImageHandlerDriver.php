@@ -20,7 +20,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		switch ($format)
 		{
 			case self::IMG_GIF:
-				if ($result = imagecreatefromgif($file))
+				if(($result = imagecreatefromgif($file)))
 				{
 					return $result;
 				}
@@ -30,7 +30,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 				}
 				break;
 			case self::IMG_JPEG:
-				if ($result = imagecreatefromjpeg($file))
+				if(($result = imagecreatefromjpeg($file)))
 				{
 					return $result;
 				}
@@ -40,7 +40,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 				}
 				break;
 			case self::IMG_PNG:
-				if ($result = imagecreatefrompng($file))
+				if(($result = imagecreatefrompng($file)))
 				{
 					return $result;
 				}
@@ -54,8 +54,10 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		}
 	}
 	
-	public function initImage($image = false)
+	public function initImage($image)
 	{
+		parent::initImage($image);
+		
 		if(is_resource($this->image))
 		{
 			imagedestroy($this->image);
@@ -154,8 +156,8 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$srcX = 0;
 		$srcY = 0;
 		
-		$width = $this->imageHandler->getWidth();
-		$height = $this->imageHandler->getHeight();
+		$width = $this->width;
+		$height = $this->height;
 		
 		$srcWidth = $width;
 		$srcHeight = $height;
@@ -185,5 +187,14 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		imagecopyresampled($newImage, $this->image, 0, 0, $srcX, $srcY, $width, $height, $srcWidth, $srcHeight);
 		imagedestroy($this->image);
 		$this->image = $newImage;
+	}
+	
+	public function rotate($degrees)
+	{
+		$degrees = intval($degrees);
+		$this->image = imagerotate($this->image, $degrees, 0);
+
+		$this->width = imagesx($this->image);
+		$this->height = imagesy($this->image);
 	}
 }

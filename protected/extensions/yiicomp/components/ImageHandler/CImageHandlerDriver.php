@@ -10,17 +10,57 @@
 
 abstract class CImageHandlerDriver
 {
+	/**
+	 * @var CImageHandler
+	 */
 	protected $imageHandler = null;
+	protected $format = 0;
+	protected $width = 0;
+	protected $height = 0;
+	protected $mimeType = '';
 	
+	public function getImage()
+	{
+		return $this->image;
+	}
+
+	public function getFormat()
+	{
+		return $this->format;
+	}
+	
+	public function getWidth()
+	{
+		return $this->width;
+	}
+	
+	public function getHeight()
+	{
+		return $this->height;
+	}
+	
+	public function getMimeType()
+	{
+		return $this->mimeType;
+	}
+
 	public function __construct($imageHandler) {
 		$this->imageHandler = $imageHandler;
 	}
 
+	public function initImage($image)
+	{
+		$this->width = $image['width'];
+		$this->height = $image['height'];
+		$this->mimeType = $image['mimeType'];
+		$this->format = $image['format'];
+	}
+	
 	abstract public function loadImage($file, $format);
-	abstract public function initImage($image = false);
 	abstract public function freeImage();
 	abstract public function checkLoaded();
 	abstract public function resize($toWidth, $toHeight);
 	abstract public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner);
 	abstract public function flip($mode);
+	abstract public function rotate($degrees);
 }

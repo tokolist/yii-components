@@ -10,12 +10,11 @@
 
 class CImageHandler extends CApplicationComponent
 {
+	/**
+	 * @var CImageHandlerDriver
+	 */
 	private $driver = null;
 	private $originalImage = null;
-	private $format = 0;
-	private $width = 0;
-	private $height = 0;
-	private $mimeType = '';
 	private $fileName = '';
 
 	const IMG_GIF = 1;
@@ -40,27 +39,27 @@ class CImageHandler extends CApplicationComponent
 
 	public function getImage()
 	{
-		return $this->image;
+		return $this->driver->getImage();
 	}
 
 	public function getFormat()
 	{
-		return $this->format;
+		return $this->driver->getFormat();
 	}
 
 	public function getWidth()
 	{
-		return $this->width;
+		return $this->driver->getWidth();
 	}
 
 	public function getHeight()
 	{
-		return $this->height;
+		return $this->driver->getHeight();
 	}
 
 	public function getMimeType()
 	{
-		return $this->mimeType;
+		return $this->driver->getMimeType();
 	}
 
 	public function __destruct()
@@ -131,12 +130,7 @@ class CImageHandler extends CApplicationComponent
 		{
 			$image = $this->originalImage;
 		}
-
-		$this->width = $image['width'];
-		$this->height = $image['height'];
-		$this->mimeType = $image['mimeType'];
-		$this->format = $image['format'];
-
+		
 		$this->driver->initImage($image);
 	}
 
@@ -312,23 +306,11 @@ class CImageHandler extends CApplicationComponent
 
 	public function rotate($degrees)
 	{
-                Yii::log('CImageHandler::rotate: ', "trace", "system.*");
+		Yii::log('CImageHandler::rotate: ', "trace", "system.*");
 
 		$this->checkLoaded();
-
-                if($this->engine=='GD')
-                {
-        		$degrees = (int) $degrees;
-        		$this->image = imagerotate($this->image, $degrees, 0);
-
-        		$this->width = imagesx($this->image);
-        		$this->height = imagesy($this->image);
-                }
-                else
-                {
-                        $this->engineExec=$this->engineIMConvert." -rotate ".$degrees." ".$this->fileName." %dest%";
-                }
-
+		$this->driver->rotate($degrees);
+		
 		return $this;
 	}
 

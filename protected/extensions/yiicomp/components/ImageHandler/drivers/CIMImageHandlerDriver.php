@@ -59,8 +59,10 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		return $file;
 	}
 	
-	public function initImage($image = false)
+	public function initImage($image)
 	{
+		parent::initImage($image);
+		
 		$this->fileName = $image['image'];
 	}
 	
@@ -107,5 +109,10 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 			default:
 				throw new Exception('Invalid $mode value');
 		}
+	}
+	
+	public function rotate($degrees)
+	{
+		$this->commandString = $this->convertPath." -rotate ".$degrees." ".$this->fileName." %dest%";
 	}
 }
