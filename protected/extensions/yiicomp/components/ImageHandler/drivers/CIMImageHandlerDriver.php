@@ -140,4 +140,9 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		$hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
 		$this->commandString = $this->convertPath." -quiet -strip -define jpeg:size=".$toWidth."x".$toHeight." ".$this->fileName." -thumbnail '".$toWidth."x".$toHeight.">' -background '".$hex."' -gravity center -extent ".$toWidth."x".$toHeight." %dest%";
 	}
+	
+	public function grayscale()
+	{
+		$this->commandString = $this->convertPath." -colorspace Gray ".$this->fileName." %dest%";
+	}
 }

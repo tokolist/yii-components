@@ -324,4 +324,16 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->width = $toWidth;
 		$this->height = $toHeight;
 	}
+	
+	public function grayscale()
+	{
+		$newImage = imagecreatetruecolor($this->width, $this->height);
+
+		imagecopy($newImage, $this->image, 0, 0, 0, 0, $this->width, $this->height);
+		imagecopymergegray($newImage, $newImage, 0, 0, 0, 0, $this->width, $this->height, 0);
+
+		imagedestroy($this->image);
+
+		$this->image = $newImage;
+	}
 }

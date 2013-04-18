@@ -375,24 +375,10 @@ class CImageHandler extends CApplicationComponent
 
 	public function grayscale()
 	{
-                Yii::log('CImageHandler::grayscale: ', "trace", "system.*");
+		Yii::log('CImageHandler::grayscale: ', "trace", "system.*");
 
-                if($this->engine=='GD')
-                {
-        		$newImage = imagecreatetruecolor($this->width, $this->height);
-
-        		imagecopy($newImage, $this->image, 0, 0, 0, 0, $this->width, $this->height);
-        		imagecopymergegray($newImage, $newImage, 0, 0, 0, 0, $this->width, $this->height, 0);
-
-        		imagedestroy($this->image);
-
-        		$this->image = $newImage;
-                }
-                else
-                {
-                        $this->engineExec=$this->engineIMConvert." -colorspace Gray ".$this->fileName." %dest%";
-                }
-
+		$this->driver->grayscale();
+		
 		return $this;
 	}
 
