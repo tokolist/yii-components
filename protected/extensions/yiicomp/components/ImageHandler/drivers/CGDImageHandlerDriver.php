@@ -337,24 +337,48 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->image = $newImage;
 	}
 	
-	public function show($inFormat = false, $jpegQuality = 75)
+	public function show($inFormat, $jpegQuality)
 	{
 		switch($inFormat)
 		{
 			case self::IMG_GIF:
-				header('Content-type: image/gif');
 				imagegif($this->image);
 				break;
 			case self::IMG_JPEG:
-				header('Content-type: image/jpeg');
 				imagejpeg($this->image, null, $jpegQuality);
 				break;
 			case self::IMG_PNG:
-				header('Content-type: image/png');
 				imagepng($this->image);
 				break;
 			default:
 				throw new Exception('Invalid image format for output');
+		}
+	}
+	
+	public function save($file, $toFormat, $jpegQuality)
+	{
+		switch($toFormat)
+		{
+			case self::IMG_GIF:
+				if (!imagegif($this->image, $file))
+				{
+					throw new Exception('Can\'t save gif file');
+				}
+				break;
+			case self::IMG_JPEG:
+				if (!imagejpeg($this->image, $file, $jpegQuality))
+				{
+					throw new Exception('Can\'t save jpeg file');
+				}
+				break;
+			case self::IMG_PNG:
+				if (!imagepng($this->image, $file))
+				{
+					throw new Exception('Can\'t save png file');
+				}
+				break;
+			default:
+				throw new Exception('Invalid image format for save');
 		}
 	}
 }

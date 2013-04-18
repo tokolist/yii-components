@@ -68,5 +68,6 @@ abstract class CImageHandlerDriver
 	abstract public function adaptiveThumb($width, $height, $backgroundColor);
 	abstract public function resizeCanvas($toWidth, $toHeight, $backgroundColor);
 	abstract public function grayscale();
-	abstract public function show($inFormat = false, $jpegQuality = 75);
+	abstract public function show($inFormat, $jpegQuality);
+	abstract public function save($file, $toFormat, $jpegQuality);
 }

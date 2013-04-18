@@ -146,8 +146,35 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		$this->commandString = $this->convertPath." -colorspace Gray ".$this->fileName." %dest%";
 	}
 	
-	public function show($inFormat = false, $jpegQuality = 75)
+	public function show($inFormat, $jpegQuality)
+	{
+		readfile($this->fileName);
+	}
+	
+	public function save($file, $toFormat, $jpegQuality)
 	{
 		//TODO
+		Yii::log('CImageHandler: '.$this->engineExec, "trace", "system.*");
+		
+		switch($toFormat)
+		{
+			case self::IMG_GIF:
+				$format="GIF";
+				break;
+			case self::IMG_JPEG:
+				$format="JPG";
+				break;
+			case self::IMG_PNG:
+				$format="PNG";
+				break;
+			default:
+				throw new Exception('Invalid image format for save');
+		}
+		
+		$this->commandString = str_replace('%dest%', ' -quality '.$jpegQuality.' '.$format.':'.$file, $this->commandString);
+		exec($this->commandString);
+		
+		//TODO
+		$this->fileName=$file;
 	}
 }

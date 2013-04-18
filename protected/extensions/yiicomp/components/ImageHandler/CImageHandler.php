@@ -324,14 +324,14 @@ class CImageHandler extends CApplicationComponent
 		$height = intval($height);
 
 		//Centered crop
-	 	$startX = $startX === false ? floor(($this->driver->getWidth() - $width) / 2) : intval($startX);
-		$startY = $startY === false ? floor(($this->driver->getHeight() - $height) / 2) : intval($startY);
+	 	$startX = $startX === false ? floor(($this->getWidth() - $width) / 2) : intval($startX);
+		$startY = $startY === false ? floor(($this->getHeight() - $height) / 2) : intval($startY);
 		
 		//Check dimensions
-		$startX = max(0, min($this->driver->getWidth(), $startX));
-		$startY = max(0, min($this->driver->getHeight(), $startY));
-		$width = min($width, $this->driver->getWidth() - $startX);
-		$height = min($height, $this->driver->getHeight() - $startY);
+		$startX = max(0, min($this->getWidth(), $startX));
+		$startY = max(0, min($this->getHeight(), $startY));
+		$width = min($width, $this->getWidth() - $startX);
+		$height = min($height, $this->getHeight() - $startY);
 
 		$this->driver->crop($width, $height, $startX, $startY);
 		
@@ -386,9 +386,24 @@ class CImageHandler extends CApplicationComponent
 	{
 		$this->checkLoaded();
 
-		if (!$inFormat)
+		if(!$inFormat)
 		{
 			$inFormat = $this->getFormat();
+		}
+		
+		switch($inFormat)
+		{
+			case self::IMG_GIF:
+				header('Content-type: image/gif');
+				break;
+			case self::IMG_JPEG:
+				header('Content-type: image/jpeg');
+				break;
+			case self::IMG_PNG:
+				header('Content-type: image/png');
+				break;
+			default:
+				throw new Exception('Invalid image format for output');
 		}
 
 		$this->driver->show($inFormat, $jpegQuality);
@@ -398,75 +413,22 @@ class CImageHandler extends CApplicationComponent
 
 	public function save($file = false, $toFormat = false, $jpegQuality = 75, $touch = false)
 	{
-                Yii::log('CImageHandler::save: ', "trace", "system.*");
+		Yii::log('CImageHandler::save: ', "trace", "system.*");
 
-		if (empty($file))
+		if(empty($file))
 		{
 			$file = $this->fileName;
 		}
 
 		$this->checkLoaded();
-
-                if($this->engine=='GD')
-                {
-        		if (!$toFormat)
-        		{
-        			$toFormat = $this->format;
-        		}
-
-        		switch ($toFormat)
-        		{
-        			case self::IMG_GIF:
-        				if (!imagegif($this->image, $file))
-        				{
-        					throw new Exception('Can\'t save gif file');
-        				}
-        				break;
-        			case self::IMG_JPEG:
-        				if (!imagejpeg($this->image, $file, $jpegQuality))
-        				{
-        					throw new Exception('Can\'t save jpeg file');
-        				}
-        				break;
-        			case self::IMG_PNG:
-        				if (!imagepng($this->image, $file))
-        				{
-        					throw new Exception('Can\'t save png file');
-        				}
-        				break;
-        			default:
-        				throw new Exception('Invalid image format for save');
-        		}
-                }
-                else
-                {
-        		if (!$toFormat)
-        		{
-        			$toFormat = $this->format;
-        		}
-
-        		switch ($toFormat)
-        		{
-        			case self::IMG_GIF:
-                                        $format="GIF";
-        				break;
-        			case self::IMG_JPEG:
-                                        $format="JPG";
-        				break;
-        			case self::IMG_PNG:
-                                        $format="PNG";
-        				break;
-        			default:
-        				throw new Exception('Invalid image format for save');
-        		}
-                        $path_parts = pathinfo($file);
-                        $file=$path_parts['dirname'].DIRECTORY_SEPARATOR.$path_parts['filename'].'.'.strtolower($format);
-                        $this->engineExec=str_replace('%dest%',' -quality '.$jpegQuality.' '.$format.':'.$file,$this->engineExec);
-                        Yii::log('CImageHandler: '.$this->engineExec, "trace", "system.*");
-                        exec($this->engineExec);
-                        $this->fileName=$file;
-                }
-
+		
+		if(!$toFormat)
+		{
+			$toFormat = $this->getFormat();
+		}
+		
+		$this->driver->save($file, $toFormat, $jpegQuality);
+		
 		if ($touch && $file != $this->fileName)
 		{
 			touch($file, filemtime($this->fileName));
