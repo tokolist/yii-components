@@ -145,4 +145,9 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	{
 		$this->commandString = $this->convertPath." -colorspace Gray ".$this->fileName." %dest%";
 	}
+	
+	public function show($inFormat = false, $jpegQuality = 75)
+	{
+		//TODO
+	}
 }
