@@ -316,55 +316,40 @@ class CImageHandler extends CApplicationComponent
 
 	public function crop($width, $height, $startX = false, $startY = false)
 	{
-                Yii::log('CImageHandler::crop: ', "trace", "system.*");
+		Yii::log('CImageHandler::crop: ', "trace", "system.*");
 
 		$this->checkLoaded();
 
-		$width = (int) $width;
-		$height = (int) $height;
+		$width = intval($width);
+		$height = intval($height);
 
 		//Centered crop
-	 	$startX = $startX === false ? floor(($this->width - $width) / 2) : intval($startX);
-		$startY = $startY === false ? floor(($this->height - $height) / 2) : intval($startY);
+	 	$startX = $startX === false ? floor(($this->driver->getWidth() - $width) / 2) : intval($startX);
+		$startY = $startY === false ? floor(($this->driver->getHeight() - $height) / 2) : intval($startY);
+		
 		//Check dimensions
-		$startX = max(0, min($this->width, $startX));
-		$startY = max(0, min($this->height, $startY));
-		$width = min($width, $this->width - $startX);
-		$height = min($height, $this->height - $startY);
+		$startX = max(0, min($this->driver->getWidth(), $startX));
+		$startY = max(0, min($this->driver->getHeight(), $startY));
+		$width = min($width, $this->driver->getWidth() - $startX);
+		$height = min($height, $this->driver->getHeight() - $startY);
 
-                if($this->engine=='GD')
-                {
-        		$newImage = imagecreatetruecolor($width, $height);
-
-        		$this->preserveTransparency($newImage);
-
-        		imagecopyresampled($newImage, $this->image, 0, 0, $startX, $startY, $width, $height, $width, $height);
-
-        		imagedestroy($this->image);
-        		$this->image = $newImage;
-        		$this->width = $width;
-        		$this->height = $height;
-                }
-                else
-                {
-                        $this->engineExec=$this->engineIMConvert." -quiet -strip -crop ".$width."x".$height."+".$startX."+".$startY." ".$this->fileName." %dest%";
-                }
-
+		$this->driver->crop($width, $height, $startX, $startY);
+		
 		return $this;
 	}
 
 	public function text($text, $fontFile, $size=12, $color=array(0, 0, 0),
 		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0)
 	{
-                Yii::log('CImageHandler::text: ', "trace", "system.*");
+		Yii::log('CImageHandler::text: ', "trace", "system.*");
 
 		$this->checkLoaded();
 
-	        $bBox = imagettfbbox($size, $angle, $fontFile, $text);
-	        $textHeight = $bBox[1] - $bBox[7];
-	        $textWidth = $bBox[2] - $bBox[0];
+		$bBox = imagettfbbox($size, $angle, $fontFile, $text);
+		$textHeight = $bBox[1] - $bBox[7];
+		$textWidth = $bBox[2] - $bBox[0];
 
-		switch ($corner)
+		switch($corner)
 		{
 			case self::CORNER_LEFT_TOP:
 				$posX = $offsetX;
@@ -406,25 +391,8 @@ class CImageHandler extends CApplicationComponent
 				throw new Exception('Invalid $corner value');
 		}
 
-                if($this->engine=='GD')
-                {
-        		if($alpha > 0)
-        		{
-        			$color =  imagecolorallocatealpha($this->image, $color[0], $color[1], $color[2], $alpha);
-        		}
-        		else
-        		{
-        			$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
-        		}
-
-        		imagettftext($this->image, $size, $angle, $posX, $posY + $textHeight, $color, $fontFile, $text);
-                }
-                else
-                {
-                        $hex=$this->RGBToHex($color[0],$color[1],$color[2]);
-                        $this->engineExec=$this->engineIMConvert." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill '".$hex."' text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";
-                }
-
+		$this->driver->text($text, $fontFile, $size, $color, $angle, $alpha);
+		
 		return $this;
 	}
 

@@ -63,4 +63,6 @@ abstract class CImageHandlerDriver
 	abstract public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner);
 	abstract public function flip($mode);
 	abstract public function rotate($degrees);
+	abstract public function crop($width, $height, $startX, $startY);
+	abstract public function text($text, $fontFile, $size, $color, $angle, $alpha);
 }

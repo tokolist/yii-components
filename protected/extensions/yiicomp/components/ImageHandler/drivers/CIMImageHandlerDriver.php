@@ -115,4 +115,15 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	{
 		$this->commandString = $this->convertPath." -rotate ".$degrees." ".$this->fileName." %dest%";
 	}
+	
+	public function crop($width, $height, $startX, $startY)
+	{
+		$this->commandString = $this->convertPath." -quiet -strip -crop ".$width."x".$height."+".$startX."+".$startY." ".$this->fileName." %dest%";
+	}
+	
+	public function text($text, $fontFile, $size, $color, $angle, $alpha)
+	{
+		$hex = $this->RGBToHex($color[0],$color[1],$color[2]);
+		$this->commandString = $this->convertPath." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill '".$hex."' text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";
+	}
 }

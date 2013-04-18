@@ -197,4 +197,32 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->width = imagesx($this->image);
 		$this->height = imagesy($this->image);
 	}
+	
+	public function crop($width, $height, $startX, $startY)
+	{
+		$newImage = imagecreatetruecolor($width, $height);
+
+		$this->preserveTransparency($newImage);
+
+		imagecopyresampled($newImage, $this->image, 0, 0, $startX, $startY, $width, $height, $width, $height);
+
+		imagedestroy($this->image);
+		$this->image = $newImage;
+		$this->width = $width;
+		$this->height = $height;
+	}
+	
+	public function text($text, $fontFile, $size, $color, $angle, $alpha)
+	{
+		if($alpha > 0)
+		{
+			$color = imagecolorallocatealpha($this->image, $color[0], $color[1], $color[2], $alpha);
+		}
+		else
+		{
+			$color = imagecolorallocate($this->image, $color[0], $color[1], $color[2]);
+		}
+
+		imagettftext($this->image, $size, $angle, $posX, $posY + $textHeight, $color, $fontFile, $text);
+	}
 }
