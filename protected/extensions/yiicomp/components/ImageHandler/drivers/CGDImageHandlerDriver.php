@@ -212,8 +212,54 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->height = $height;
 	}
 	
-	public function text($text, $fontFile, $size, $color, $angle, $alpha)
+	public function text($text, $fontFile, $size, $color, $corner, $offsetX, $offsetY, $angle, $alpha)
 	{
+		$bBox = imagettfbbox($size, $angle, $fontFile, $text);
+		$textHeight = $bBox[1] - $bBox[7];
+		$textWidth = $bBox[2] - $bBox[0];
+
+		switch($corner)
+		{
+			case self::CORNER_LEFT_TOP:
+				$posX = $offsetX;
+				$posY = $offsetY;
+				break;
+			case self::CORNER_RIGHT_TOP:
+				$posX = $this->width - $textWidth - $offsetX;
+				$posY = $offsetY;
+				break;
+			case self::CORNER_LEFT_BOTTOM:
+				$posX = $offsetX;
+				$posY = $this->height - $textHeight - $offsetY;
+				break;
+			case self::CORNER_RIGHT_BOTTOM:
+				$posX = $this->width - $textWidth - $offsetX;
+				$posY = $this->height - $textHeight - $offsetY;
+				break;
+			case self::CORNER_CENTER:
+				$posX = floor(($this->width - $textWidth) / 2);
+				$posY = floor(($this->height - $textHeight) / 2);
+				break;
+			case self::CORNER_CENTER_TOP:
+				$posX = floor(($this->width - $textWidth) / 2);
+				$posY = $offsetY;
+				break;
+			case self::CORNER_CENTER_BOTTOM:
+				$posX = floor(($this->width - $textWidth) / 2);
+				$posY = $this->height - $textHeight - $offsetY;
+				break;
+			case self::CORNER_LEFT_CENTER:
+				$posX = $offsetX;
+				$posY = floor(($this->height - $textHeight) / 2);
+				break;
+			case self::CORNER_RIGHT_CENTER:
+				$posX = $this->width - $textWidth - $offsetX;
+				$posY = floor(($this->height - $textHeight) / 2);
+				break;
+			default:
+				throw new Exception('Invalid $corner value');
+		}
+		
 		if($alpha > 0)
 		{
 			$color = imagecolorallocatealpha($this->image, $color[0], $color[1], $color[2], $alpha);
@@ -224,5 +270,24 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		}
 
 		imagettftext($this->image, $size, $angle, $posX, $posY + $textHeight, $color, $fontFile, $text);
+	}
+	
+	public function adaptiveThumb($width, $height, $backgroundColor)
+	{
+		$widthProportion = $width / $this->width;
+		$heightProportion = $height / $this->height;
+
+		if ($widthProportion > $heightProportion)
+		{
+			$newWidth = $width;
+			$newHeight = round($newWidth / $this->width * $this->height);
+		}
+		else
+		{
+			$newHeight = $height;
+			$newWidth = round($newHeight / $this->height * $this->width);
+		}
+		$this->resize($newWidth, $newHeight);
+		$this->crop($width, $height);
 	}
 }

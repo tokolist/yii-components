@@ -344,53 +344,6 @@ class CImageHandler extends CApplicationComponent
 		Yii::log('CImageHandler::text: ', "trace", "system.*");
 
 		$this->checkLoaded();
-
-		$bBox = imagettfbbox($size, $angle, $fontFile, $text);
-		$textHeight = $bBox[1] - $bBox[7];
-		$textWidth = $bBox[2] - $bBox[0];
-
-		switch($corner)
-		{
-			case self::CORNER_LEFT_TOP:
-				$posX = $offsetX;
-				$posY = $offsetY;
-				break;
-			case self::CORNER_RIGHT_TOP:
-				$posX = $this->width - $textWidth - $offsetX;
-				$posY = $offsetY;
-				break;
-			case self::CORNER_LEFT_BOTTOM:
-				$posX = $offsetX;
-				$posY = $this->height - $textHeight - $offsetY;
-				break;
-			case self::CORNER_RIGHT_BOTTOM:
-				$posX = $this->width - $textWidth - $offsetX;
-				$posY = $this->height - $textHeight - $offsetY;
-				break;
-			case self::CORNER_CENTER:
-				$posX = floor(($this->width - $textWidth) / 2);
-				$posY = floor(($this->height - $textHeight) / 2);
-				break;
-			case self::CORNER_CENTER_TOP:
-				$posX = floor(($this->width - $textWidth) / 2);
-				$posY = $offsetY;
-				break;
-			case self::CORNER_CENTER_BOTTOM:
-				$posX = floor(($this->width - $textWidth) / 2);
-				$posY = $this->height - $textHeight - $offsetY;
-				break;
-			case self::CORNER_LEFT_CENTER:
-				$posX = $offsetX;
-				$posY = floor(($this->height - $textHeight) / 2);
-				break;
-			case self::CORNER_RIGHT_CENTER:
-				$posX = $this->width - $textWidth - $offsetX;
-				$posY = floor(($this->height - $textHeight) / 2);
-				break;
-			default:
-				throw new Exception('Invalid $corner value');
-		}
-
 		$this->driver->text($text, $fontFile, $size, $color, $angle, $alpha);
 		
 		return $this;
@@ -398,36 +351,14 @@ class CImageHandler extends CApplicationComponent
 
 	public function adaptiveThumb($width, $height, $backgroundColor=array(0, 0, 0))
 	{
-                Yii::log('CImageHandler::adaptiveThumb: ', "trace", "system.*");
+		Yii::log('CImageHandler::adaptiveThumb: ', "trace", "system.*");
 
 		$this->checkLoaded();
-
-                if($this->engine=='GD')
-                {
-        		$width = intval($width);
-        		$height = intval($height);
-
-        		$widthProportion = $width / $this->width;
-        		$heightProportion = $height / $this->height;
-
-        		if ($widthProportion > $heightProportion)
-        		{
-        			$newWidth = $width;
-        			$newHeight = round($newWidth / $this->width * $this->height);
-        		}
-        		else
-        		{
-        			$newHeight = $height;
-        			$newWidth = round($newHeight / $this->height * $this->width);
-        		}
-        		$this->resize($newWidth, $newHeight);
-        		$this->crop($width, $height);
-                }
-                else
-                {
-                        $hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
-                        $this->engineExec=$this->engineIMConvert." -quiet -strip -define jpeg:size=".$width."x".$height." ".$this->fileName." -thumbnail '".$width."x".$height.">' -background '".$hex."' -gravity center -extent ".$width."x".$height." %dest%";
-                }
+		
+		$width = intval($width);
+		$height = intval($height);
+		
+		$this->driver->adaptiveThumb($width, $height, $backgroundColor);
 
 		return $this;
 	}

@@ -121,9 +121,16 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		$this->commandString = $this->convertPath." -quiet -strip -crop ".$width."x".$height."+".$startX."+".$startY." ".$this->fileName." %dest%";
 	}
 	
-	public function text($text, $fontFile, $size, $color, $angle, $alpha)
+	public function text($text, $fontFile, $size, $color, $corner, $offsetX, $offsetY, $angle, $alpha)
 	{
-		$hex = $this->RGBToHex($color[0],$color[1],$color[2]);
-		$this->commandString = $this->convertPath." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill '".$hex."' text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";
+		//TODO http://www.imagemagick.org/Usage/text/#font_info
+		/*$hex = $this->RGBToHex($color[0],$color[1],$color[2]);
+		$this->commandString = $this->convertPath." -quiet -font ".$fontFile." -pointsize ".$size." -draw \"gravity south fill '".$hex."' text ".$posX.",".$posY." '".$text."' \" ".$this->fileName." %dest%";*/
+	}
+	
+	public function adaptiveThumb($width, $height, $backgroundColor)
+	{
+		$hex = $this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
+		$this->commandString = $this->convertPath." -quiet -strip -define jpeg:size=".$width."x".$height." ".$this->fileName." -thumbnail '".$width."x".$height.">' -background '".$hex."' -gravity center -extent ".$width."x".$height." %dest%";
 	}
 }
