@@ -365,48 +365,10 @@ class CImageHandler extends CApplicationComponent
 
 	public function resizeCanvas($toWidth, $toHeight, $backgroundColor = array(255, 255, 255))
 	{
-                Yii::log('CImageHandler::resizeCanvas: ', "trace", "system.*");
+		Yii::log('CImageHandler::resizeCanvas: ', "trace", "system.*");
 
 		$this->checkLoaded();
-
-                if($this->engine=='GD')
-                {
-        		$newWidth = min($toWidth, $this->width);
-        		$newHeight = min($toHeight, $this->height);
-
-        		$widthProportion = $newWidth / $this->width;
-        		$heightProportion = $newHeight / $this->height;
-
-        		if($widthProportion < $heightProportion)
-        		{
-        			$newHeight = round($widthProportion * $this->height);
-        		}
-        		else
-        		{
-        			$newWidth = round($heightProportion * $this->width);
-        		}
-
-        		$posX = floor(($toWidth - $newWidth) / 2);
-        		$posY = floor(($toHeight - $newHeight) / 2);
-
-                        $newImage = imagecreatetruecolor($toWidth, $toHeight);
-
-        		$backgroundColor = imagecolorallocate($newImage, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
-        		imagefill($newImage, 0, 0, $backgroundColor);
-
-        		imagecopyresampled($newImage, $this->image, $posX, $posY, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
-
-        		imagedestroy($this->image);
-
-        		$this->image = $newImage;
-        		$this->width = $toWidth;
-        		$this->height = $toHeight;
-                }
-                else
-                {
-                        $hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
-                        $this->engineExec=$this->engineIMConvert." -quiet -strip -define jpeg:size=".$toWidth."x".$toHeight." ".$this->fileName." -thumbnail '".$toWidth."x".$toHeight.">' -background '".$hex."' -gravity center -extent ".$toWidth."x".$toHeight." %dest%";
-                }
+		$this->driver->resizeCanvas($toWidth, $toHeight, $backgroundColor);
 
 		return $this;
 	}

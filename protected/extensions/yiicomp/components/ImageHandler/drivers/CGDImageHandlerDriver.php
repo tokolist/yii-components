@@ -290,4 +290,38 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		$this->resize($newWidth, $newHeight);
 		$this->crop($width, $height);
 	}
+	
+	public function resizeCanvas($toWidth, $toHeight, $backgroundColor)
+	{
+		$newWidth = min($toWidth, $this->width);
+		$newHeight = min($toHeight, $this->height);
+
+		$widthProportion = $newWidth / $this->width;
+		$heightProportion = $newHeight / $this->height;
+
+		if($widthProportion < $heightProportion)
+		{
+			$newHeight = round($widthProportion * $this->height);
+		}
+		else
+		{
+			$newWidth = round($heightProportion * $this->width);
+		}
+
+		$posX = floor(($toWidth - $newWidth) / 2);
+		$posY = floor(($toHeight - $newHeight) / 2);
+
+		$newImage = imagecreatetruecolor($toWidth, $toHeight);
+
+		$backgroundColor = imagecolorallocate($newImage, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
+		imagefill($newImage, 0, 0, $backgroundColor);
+
+		imagecopyresampled($newImage, $this->image, $posX, $posY, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
+
+		imagedestroy($this->image);
+
+		$this->image = $newImage;
+		$this->width = $toWidth;
+		$this->height = $toHeight;
+	}
 }

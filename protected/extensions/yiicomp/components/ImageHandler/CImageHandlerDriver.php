@@ -66,4 +66,5 @@ abstract class CImageHandlerDriver
 	abstract public function crop($width, $height, $startX, $startY);
 	abstract public function text($text, $fontFile, $size, $color, $corner, $offsetX, $offsetY, $angle, $alpha);
 	abstract public function adaptiveThumb($width, $height, $backgroundColor);
+	abstract public function resizeCanvas($toWidth, $toHeight, $backgroundColor);
 }

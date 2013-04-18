@@ -133,4 +133,11 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		$hex = $this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
 		$this->commandString = $this->convertPath." -quiet -strip -define jpeg:size=".$width."x".$height." ".$this->fileName." -thumbnail '".$width."x".$height.">' -background '".$hex."' -gravity center -extent ".$width."x".$height." %dest%";
 	}
+	
+	public function resizeCanvas($toWidth, $toHeight, $backgroundColor)
+	{
+		//TODO $newWidth, $newHeight
+		$hex=$this->RGBToHex($backgroundColor[0],$backgroundColor[1],$backgroundColor[2]);
+		$this->commandString = $this->convertPath." -quiet -strip -define jpeg:size=".$toWidth."x".$toHeight." ".$this->fileName." -thumbnail '".$toWidth."x".$toHeight.">' -background '".$hex."' -gravity center -extent ".$toWidth."x".$toHeight." %dest%";
+	}
 }
