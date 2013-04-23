@@ -1,4 +1,11 @@
 <?php
+/**
+ * Yii wrapper for ImageHandler
+ * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
+ * @link https://github.com/tokolist/yii-components
+ * @version 1.0
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 require 'CImageHandler.php';
 
