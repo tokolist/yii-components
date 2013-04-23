@@ -33,7 +33,7 @@ return array(
 	// application components
 	'components'=>array(
 		'ih'=>array(
-			'class'=>'ext.yiicomp.components.ImageHandler.CImageHandler',
+			'class'=>'ext.yiicomp.components.ImageHandler.CYiiImageHandler',
 		),
 		
 		'user'=>array(

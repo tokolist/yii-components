@@ -8,7 +8,7 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-class CImageHandler extends CApplicationComponent
+class CImageHandler
 {
 	/**
 	 * @var CImageHandlerDriver
@@ -105,7 +105,7 @@ class CImageHandler extends CApplicationComponent
 		Yii::log('CImageHandler::loadImage: '.$file, "trace", "system.*");
 
 		$result = array();
-
+		
 		if(($imageInfo = @getimagesize($file)))
 		{
 			$result['width'] = $imageInfo[0];
@@ -139,7 +139,7 @@ class CImageHandler extends CApplicationComponent
 		Yii::log('CImageHandler::load: '.$file, "trace", "system.*");
 
 		$this->freeImage();
-
+		
 		if(($this->originalImage = $this->loadImage($file)))
 		{
 			$this->initImage();
@@ -168,17 +168,17 @@ class CImageHandler extends CApplicationComponent
 
 		$this->checkLoaded();
 
-		$toWidth = $toWidth !== false ? $toWidth : $this->width;
-		$toHeight = $toHeight !== false ? $toHeight : $this->height;
+		$toWidth = $toWidth !== false ? $toWidth : $this->getWidth();
+		$toHeight = $toHeight !== false ? $toHeight : $this->getHeight();
 
 		if($proportional)
 		{
 			$newHeight = $toHeight;
-			$newWidth = round($newHeight / $this->height * $this->width);
+			$newWidth = round($newHeight / $this->getWidth() * $this->getWidth());
 			if($newWidth > $toWidth)
 			{
 				$newWidth = $toWidth;
-				$newHeight = round($newWidth / $this->width * $this->height);
+				$newHeight = round($newWidth / $this->getWidth() * $this->getWidth());
 			}
 		}
 		else
@@ -199,12 +199,12 @@ class CImageHandler extends CApplicationComponent
 		$this->checkLoaded();
 
 		if($toWidth !== false)
-			$toWidth = min($toWidth, $this->width);
+			$toWidth = min($toWidth, $this->getWidth());
 
 		if($toHeight !== false)
-			$toHeight = min($toHeight, $this->height);
+			$toHeight = min($toHeight, $this->getHeight());
 
-
+		
 		$this->resize($toWidth, $toHeight, $proportional);
 
 		return $this;
@@ -226,7 +226,7 @@ class CImageHandler extends CApplicationComponent
 
 			if($zoom !== false)
 			{
-				$dimension = round(max($this->width, $this->height) * $zoom);
+				$dimension = round(max($this->getWidth(), $this->getHeight()) * $zoom);
 
 				$watermarkHeight = $dimension;
 				$watermarkWidth = round($watermarkHeight / $wImg['height'] * $wImg['width']);
@@ -246,36 +246,36 @@ class CImageHandler extends CApplicationComponent
 					$posY = $offsetY;
 					break;
 				case self::CORNER_RIGHT_TOP:
-					$posX = $this->width - $watermarkWidth - $offsetX;
+					$posX = $this->getWidth() - $watermarkWidth - $offsetX;
 					$posY = $offsetY;
 					break;
 				case self::CORNER_LEFT_BOTTOM:
 					$posX = $offsetX;
-					$posY = $this->height - $watermarkHeight - $offsetY;
+					$posY = $this->getHeight() - $watermarkHeight - $offsetY;
 					break;
 				case self::CORNER_RIGHT_BOTTOM:
-					$posX = $this->width - $watermarkWidth - $offsetX;
-					$posY = $this->height - $watermarkHeight - $offsetY;
+					$posX = $this->getWidth() - $watermarkWidth - $offsetX;
+					$posY = $this->getHeight() - $watermarkHeight - $offsetY;
 					break;
 				case self::CORNER_CENTER:
-					$posX = floor(($this->width - $watermarkWidth) / 2);
-					$posY = floor(($this->height - $watermarkHeight) / 2);
+					$posX = floor(($this->getWidth() - $watermarkWidth) / 2);
+					$posY = floor(($this->getHeight() - $watermarkHeight) / 2);
 					break;
 				case self::CORNER_CENTER_TOP:
-					$posX = floor(($this->width - $watermarkWidth) / 2);
+					$posX = floor(($this->getWidth() - $watermarkWidth) / 2);
 					$posY = $offsetY;
 					break;
 				case self::CORNER_CENTER_BOTTOM:
-					$posX = floor(($this->width - $watermarkWidth) / 2);
-					$posY = $this->height - $watermarkHeight - $offsetY;
+					$posX = floor(($this->getWidth() - $watermarkWidth) / 2);
+					$posY = $this->getHeight() - $watermarkHeight - $offsetY;
 					break;
 				case self::CORNER_LEFT_CENTER:
 					$posX = $offsetX;
-					$posY = floor(($this->height - $watermarkHeight) / 2);
+					$posY = floor(($this->getHeight() - $watermarkHeight) / 2);
 					break;
 				case self::CORNER_RIGHT_CENTER:
-					$posX = $this->width - $watermarkWidth - $offsetX;
-					$posY = floor(($this->height - $watermarkHeight) / 2);
+					$posX = $this->getWidth() - $watermarkWidth - $offsetX;
+					$posY = floor(($this->getHeight() - $watermarkHeight) / 2);
 					break;
 				case self::CORNER_TILE:
 					break;

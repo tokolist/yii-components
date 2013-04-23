@@ -8,7 +8,7 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-require '..\CImageHandlerDriver.php';
+require '\..\CImageHandlerDriver.php';
 
 class CIMImageHandlerDriver extends CImageHandlerDriver
 {

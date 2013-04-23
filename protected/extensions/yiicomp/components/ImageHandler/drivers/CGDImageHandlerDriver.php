@@ -8,7 +8,7 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-require '..\CImageHandlerDriver.php';
+require '\..\CImageHandlerDriver.php';
 
 class CGDImageHandlerDriver extends CImageHandlerDriver
 {
@@ -19,7 +19,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch ($format)
 		{
-			case self::IMG_GIF:
+			case CImageHandler::IMG_GIF:
 				if(($result = imagecreatefromgif($file)))
 				{
 					return $result;
@@ -29,7 +29,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 					throw new Exception('Invalid image gif format');
 				}
 				break;
-			case self::IMG_JPEG:
+			case CImageHandler::IMG_JPEG:
 				if(($result = imagecreatefromjpeg($file)))
 				{
 					return $result;
@@ -39,7 +39,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 					throw new Exception('Invalid image jpeg format');
 				}
 				break;
-			case self::IMG_PNG:
+			case CImageHandler::IMG_PNG:
 				if(($result = imagecreatefrompng($file)))
 				{
 					return $result;
@@ -72,7 +72,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch($this->format)
 		{
-			case self::IMG_GIF:
+			case CImageHandler::IMG_GIF:
 				$color = imagecolorallocate(
 					$newImage,
 					$this->transparencyColor[0],
@@ -83,7 +83,7 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 				imagecolortransparent($newImage, $color);
 				imagetruecolortopalette($newImage, false, 256);
 				break;
-			case self::IMG_PNG:
+			case CImageHandler::IMG_PNG:
     			imagealphablending($newImage, false);
 
 				$color = imagecolorallocatealpha (
@@ -124,13 +124,13 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 	
 	public function resize($toWidth, $toHeight)
 	{
-		$newImage = imagecreatetruecolor($newWidth, $newHeight);
+		$newImage = imagecreatetruecolor($toWidth, $toHeight);
 		$this->preserveTransparency($newImage);
-		imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $newWidth, $newHeight, $this->width, $this->height);
+		imagecopyresampled($newImage, $this->image, 0, 0, 0, 0, $toWidth, $toHeight, $this->width, $this->height);
 		imagedestroy($this->image);
 		$this->image = $newImage;
-		$this->width = $newWidth;
-		$this->height = $newHeight;
+		$this->width = $toWidth;
+		$this->height = $toHeight;
 	}
 	
 	public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner)
@@ -359,19 +359,19 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch($toFormat)
 		{
-			case self::IMG_GIF:
+			case CImageHandler::IMG_GIF:
 				if (!imagegif($this->image, $file))
 				{
 					throw new Exception('Can\'t save gif file');
 				}
 				break;
-			case self::IMG_JPEG:
+			case CImageHandler::IMG_JPEG:
 				if (!imagejpeg($this->image, $file, $jpegQuality))
 				{
 					throw new Exception('Can\'t save jpeg file');
 				}
 				break;
-			case self::IMG_PNG:
+			case CImageHandler::IMG_PNG:
 				if (!imagepng($this->image, $file))
 				{
 					throw new Exception('Can\'t save png file');
