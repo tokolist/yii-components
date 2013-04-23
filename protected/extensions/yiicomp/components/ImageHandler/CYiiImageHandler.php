@@ -32,7 +32,7 @@ class CYiiImageHandler extends CApplicationComponent
 		return $this->imageHandler->load($file);
 	}
 	
-	protected function log($logMessage, $logLevel)
+	public function log($logMessage, $logLevel)
 	{
 		$yiiLogLevels = array(
 			CImageHandler::LOG_LEVEL_TRACE => CLogger::LEVEL_TRACE,
