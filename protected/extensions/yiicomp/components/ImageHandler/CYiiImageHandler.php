@@ -16,14 +16,31 @@ class CYiiImageHandler extends CApplicationComponent
 	public $driverOptions = array();
 
 
-	public function init() {
+	public function init()
+	{
 		parent::init();
 		
-		$this->imageHandler = new CImageHandler($this->driver, $this->driverOptions);
+		$this->imageHandler = new CImageHandler(
+			$this->driver,
+			$this->driverOptions,
+			array($this, 'log')
+		);
 	}
 	
 	public function load($file)
 	{
 		return $this->imageHandler->load($file);
+	}
+	
+	protected function log($logMessage, $logLevel)
+	{
+		$yiiLogLevels = array(
+			CImageHandler::LOG_LEVEL_TRACE => CLogger::LEVEL_TRACE,
+			CImageHandler::LOG_LEVEL_WARNING => CLogger::LEVEL_WARNING,
+			CImageHandler::LOG_LEVEL_ERROR => CLogger::LEVEL_ERROR,
+			CImageHandler::LOG_LEVEL_INFO => CLogger::LEVEL_INFO,
+		);
+		
+		Yii::log($logMessage, $yiiLogLevels[$logLevel], "system.*");
 	}
 }

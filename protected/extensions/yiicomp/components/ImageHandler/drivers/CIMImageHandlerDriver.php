@@ -153,9 +153,6 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	
 	public function save($file, $toFormat, $jpegQuality)
 	{
-		//TODO
-		Yii::log('CImageHandler: '.$this->engineExec, "trace", "system.*");
-		
 		switch($toFormat)
 		{
 			case self::IMG_GIF:
@@ -172,6 +169,7 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 		}
 		
 		$this->commandString = str_replace('%dest%', ' -quality '.$jpegQuality.' '.$format.':'.$file, $this->commandString);
+		$this->imageHandler->log(__CLASS__ . ': executing command ' . $this->commandString, CImageHandler::LOG_LEVEL_TRACE);
 		exec($this->commandString);
 		
 		//TODO

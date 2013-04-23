@@ -16,6 +16,7 @@ class CImageHandler
 	private $driver = null;
 	private $originalImage = null;
 	private $fileName = '';
+	private $logCallback = false;
 
 	const IMG_GIF = 1;
 	const IMG_JPEG = 2;
@@ -35,7 +36,11 @@ class CImageHandler
 	const FLIP_HORIZONTAL = 1;
 	const FLIP_VERTICAL = 2;
 	const FLIP_BOTH = 3;
-
+	
+	const LOG_LEVEL_TRACE = 1;
+	const LOG_LEVEL_WARNING = 2;
+	const LOG_LEVEL_ERROR = 3;
+	const LOG_LEVEL_INFO = 4;
 
 	public function getImage()
 	{
@@ -67,7 +72,20 @@ class CImageHandler
 		$this->freeImage();
 	}
 	
-	public function __construct($driver, $driverOptions=array()) {
+	public function log($logMessage, $logLevel)
+	{
+		if($this->logCallback !== false)
+		{
+			call_user_func($this->logCallback, $logMessage, $logLevel);
+		}
+	}
+	
+	public static function getMethodStr($className = __CLASS__, $methodName = __METHOD__)
+	{
+		return $className . '::' . $methodName . '()';
+	}
+
+	public function __construct($driver, $driverOptions=array(), $logCallback = false) {
 		if(empty($driver))
 		{
 			throw new Exception('Invalid driver name');
@@ -82,6 +100,8 @@ class CImageHandler
 			$this->driver->{$option} = $value;
 		}
 		
+		$this->logCallback = $logCallback;
+		
 		return $this;
 	}
 
@@ -92,7 +112,7 @@ class CImageHandler
 
 	private function checkLoaded()
 	{
-		Yii::log('CImageHandler::checkLoaded: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		if(!$this->driver->checkLoaded())
 		{
@@ -102,7 +122,7 @@ class CImageHandler
 
 	private function loadImage($file)
 	{
-		Yii::log('CImageHandler::loadImage: '.$file, "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$result = array();
 		
@@ -124,7 +144,7 @@ class CImageHandler
 
 	protected function initImage($image = false)
 	{
-		Yii::log('CImageHandler::initImage: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 		
 		if($image === false)
 		{
@@ -136,7 +156,7 @@ class CImageHandler
 
 	public function load($file)
 	{
-		Yii::log('CImageHandler::load: '.$file, "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->freeImage();
 		
@@ -154,7 +174,7 @@ class CImageHandler
 
 	public function reload()
 	{
-		Yii::log('CImageHandler::reload: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->initImage();
@@ -164,7 +184,7 @@ class CImageHandler
 
 	public function resize($toWidth, $toHeight, $proportional = true)
 	{
-		Yii::log('CImageHandler::resize: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -194,7 +214,7 @@ class CImageHandler
 
 	public function thumb($toWidth, $toHeight, $proportional = true)
 	{
-		Yii::log('CImageHandler::thumb: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -212,7 +232,7 @@ class CImageHandler
 
 	public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false)
 	{
-		Yii::log('CImageHandler::watermark: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -296,7 +316,7 @@ class CImageHandler
 
 	public function flip($mode)
 	{
-		Yii::log('CImageHandler::flip: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->flip($mode);
@@ -306,7 +326,7 @@ class CImageHandler
 
 	public function rotate($degrees)
 	{
-		Yii::log('CImageHandler::rotate: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->rotate($degrees);
@@ -316,7 +336,7 @@ class CImageHandler
 
 	public function crop($width, $height, $startX = false, $startY = false)
 	{
-		Yii::log('CImageHandler::crop: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -341,7 +361,7 @@ class CImageHandler
 	public function text($text, $fontFile, $size=12, $color=array(0, 0, 0),
 		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0)
 	{
-		Yii::log('CImageHandler::text: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->text($text, $fontFile, $size, $color, $angle, $alpha);
@@ -351,7 +371,7 @@ class CImageHandler
 
 	public function adaptiveThumb($width, $height, $backgroundColor=array(0, 0, 0))
 	{
-		Yii::log('CImageHandler::adaptiveThumb: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		
@@ -365,7 +385,7 @@ class CImageHandler
 
 	public function resizeCanvas($toWidth, $toHeight, $backgroundColor = array(255, 255, 255))
 	{
-		Yii::log('CImageHandler::resizeCanvas: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->resizeCanvas($toWidth, $toHeight, $backgroundColor);
@@ -375,7 +395,7 @@ class CImageHandler
 
 	public function grayscale()
 	{
-		Yii::log('CImageHandler::grayscale: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		$this->driver->grayscale();
 		
@@ -384,6 +404,8 @@ class CImageHandler
 
 	public function show($inFormat = false, $jpegQuality = 75)
 	{
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		
 		$this->checkLoaded();
 
 		if(!$inFormat)
@@ -413,7 +435,7 @@ class CImageHandler
 
 	public function save($file = false, $toFormat = false, $jpegQuality = 75, $touch = false)
 	{
-		Yii::log('CImageHandler::save: ', "trace", "system.*");
+		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
 
 		if(empty($file))
 		{
