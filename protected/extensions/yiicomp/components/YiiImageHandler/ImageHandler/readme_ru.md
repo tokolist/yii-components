@@ -1,7 +1,7 @@
-CImageHandler
+ImageHandler
 =============
 
-`CImageHandler` - компонент для обработки изображений.
+ImageHandler это фреймворк для обработки изображений
 
 Возможности
 -----------
@@ -10,47 +10,65 @@ CImageHandler
 * сохранение прозрачности при работе с PNG и GIF
 * комбинирование нескольких операций над одной картинкой
 * загрузка из любого и сохранение в любой из поддерживаемых форматов
+* как драйвер можно использовать GD или ImageMagic
 
 Подключение
 -----------
 
-1. Скопируйте папку ImageHandler в папку `components`
+1. Скопируйте папку ImageHandler в папку Вашего проекта
 
-2. Добавте путь в импорт
-
-~~~php
-'import'=>array(
-
-    ...
-
-    'application.components.ImageHandler.CImageHandler',
-
-    ...
-
-)
-~~~
-
-3. в `config/main.php`
+2. Подключите скрипт CImageHandler.php
 
 ~~~php
-'components'=>array(
-
-    ...
-
-    'ih'=>array(
-        'class'=>'CImageHandler',
-    ),
-
-    ...
-
-)
+require 'path\to\CImageHandler.php';
 ~~~
 
-или можно просто создавать экземпляр класса
+3. Создайте экземпляр ImageHandler
+
+~~~php
+$ih = new CImageHandler('GD');
+~~~
+
+Создание экземпляра объекта
+-------------
+
+~~~php
+public function __construct($driver='GD', $driverOptions=array(), $logCallback = false);
+~~~
 
 ~~~php
 $ih = new CImageHandler();
 ~~~
+
+Параметры:
+
+`$driver` - драйвер который будет использоваться. Возможные значения
+
+* `GD` - GD library
+* `IM` - ImageMagic
+
+`$driverOptions` - массив настроек драйверы. Значение по умолчанию `array()`.
+
+Опции драйвера GD:
+
+* `$transparencyColor` - цвет прозрачности в RGB. Значение по умолчанию `array(0, 0, 0)`
+
+Опции ImageMagic драйвера
+
+* `$convertPath` - путь к утилите `convert`. Значение по умолчанию `/usr/bin/convert`
+* `$compositePath` - путь к утилите `composite`. Значение по умолчанию `/usr/bin/composite`
+
+`$logCallback` - вы можете указать колбек функцию или метод, если хотите создать
+систему логирования для ImageHandler. Формат такой же как и для php функции `call_user_func`.
+У указанной функции должны быть следующие два параметра
+
+`$logMessage` - текст сообщения
+`$logLevel` - тип сообщения. Возможные значения
+
+* `LOG_LEVEL_TRACE`
+* `LOG_LEVEL_WARNING`
+* `LOG_LEVEL_ERROR`
+* `LOG_LEVEL_INFO`
 
 Загрузка изображения
 --------------------
@@ -106,8 +124,7 @@ public function show($inFormat = false, $jpegQuality = 75);
 `$jpegQuality` - если выводим в JPEG формате, то можно задать качество. По умолчанию `75`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->crop(20, 20, 200, 200)
     ->show();
 ~~~
@@ -126,8 +143,7 @@ public function thumb($toWidth, $toHeight, $proportional = true);
 `$proportional` - пропорционально ли масштабировать изображение. По умолчанию `true`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
 ~~~
@@ -146,8 +162,7 @@ public function resize($toWidth, $toHeight, $proportional = true);
 `$proportional` - пропорционально ли масштабировать изображение. По умолчанию `true`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->resize(80, 80, false)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/80x80.jpg')
     ->reload()
@@ -179,8 +194,7 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 * `CORNER_CENTER` - центр изображения
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM, 0.3)
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
@@ -200,8 +214,7 @@ public function flip($mode);
 * `FLIP_BOTH` - горизонтально и вертикально одновременно
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->flip(CImageHandler::FLIP_BOTH)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/flipped.jpg');
 ~~~
@@ -216,8 +229,7 @@ public function rotate($degrees);
 `$degrees` - угол в градусах. Если отрицательное значение, то поворот осуществляется против часовой стрелки.
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->rotate(-90)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/rotated.jpg');
 ~~~
@@ -238,8 +250,7 @@ public function crop($width, $height, $startX = false, $startY = false);
 `$startY` - отступ по вертикали области, которая останется. Если задать `false,` то область будет центрироваться по вертикали. По умолчанию `false`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
     ->crop(100, 100, 10, 10)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.png');
 ~~~
@@ -280,8 +291,7 @@ public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=
 `$alpha` - прозрачность текста. Возможные значения 0-127. Значение по умолчанию 0, т.е. полностью непрозрачный текст
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->text('Hello!', $_SERVER['DOCUMENT_ROOT'] . '/upload/georgia.ttf',
         20, array(255,0,0), CImageHandler::CORNER_LEFT_BOTTOM, 10, 10)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/text.jpg');
@@ -299,8 +309,7 @@ public function adaptiveThumb($width, $height);
 `$height` - высота под которую подогнать
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->adaptiveThumb(50, 50)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.jpg');
 ~~~
@@ -319,8 +328,7 @@ public function resizeCanvas($toWidth, $toHeight, $backgroundColor = array(255, 
 `$backgroundColor` - цвет фона в RGB формате массивом `array(красный, зеленый, синий)`. По умолчанию белый `array(255, 255, 255)`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->resizeCanvas(300,300, array(0,255,0))
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.jpg');
 ~~~
@@ -328,8 +336,8 @@ Yii::app()->ih
 Если указать в качестве размеров изображения исходные ширину и высоту, то получим просто заливку бекграунда:
 
 ~~~php
-Yii::app()->ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
-    ->resizeCanvas(Yii::app()->ih->width,Yii::app()->ih->height,array(0, 255, 0))
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
+    ->resizeCanvas($ih->getWidth(),$ih->getHeight(),array(0, 255, 0))
     ->show();
 ~~~
 
@@ -343,7 +351,7 @@ public function grayscale();
 Без параметров.
 
 ~~~php
-Yii::app()->ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->grayscale()
     ->show();
 ~~~

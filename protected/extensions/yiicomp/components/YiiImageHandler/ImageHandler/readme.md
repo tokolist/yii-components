@@ -1,7 +1,7 @@
-CImageHandler
+ImageHandler
 =============
 
-`CImageHandler` - component for image handling.
+ImageHandler is an image processing framework
 
 Features
 --------
@@ -10,47 +10,67 @@ Features
 * transparency preserving for PNG and GIF formats
 * applying of few actions to one image at once
 * loading from and saving to any supported file formats
+* you can use either GD or ImageMagic as an driver
 
 Installation
 ------------
 
-1. Copy ImageHandler directory to Yii `components` directory
+1. Copy ImageHandler directory into your project directory
 
-2. Add import path
-
-~~~php
-'import'=>array(
-
-    ...
-
-    'application.components.ImageHandler.CImageHandler',
-
-    ...
-
-)
-~~~
-
-3. Add following lines to `config/main.php`
+2. Add a require statement to your script
 
 ~~~php
-'components'=>array(
-
-    ...
-
-    'ih'=>array(
-        'class'=>'CImageHandler',
-    ),
-
-    ...
-
-)
+require 'path\to\CImageHandler.php';
 ~~~
 
-or you can use it as simle class
+3. Create an ImageHandler instance
 
 ~~~php
 $ih = new CImageHandler();
 ~~~
+
+Instance creation
+-------------
+
+~~~php
+public function __construct($driver='GD', $driverOptions=array(), $logCallback = false);
+~~~
+
+~~~php
+$ih = new CImageHandler();
+~~~
+
+There are the following constructor parameters:
+
+`$driver` - driver which you are going to use. Possible options
+
+* `GD` - GD library
+* `IM` - ImageMagic
+
+The default value is `GD`.
+
+`$driverOptions` - driver options array. The default value is `array()`.
+
+GD driver has the following options
+
+* `transparencyColor` - transparency color in RGB. The default value is `array(0, 0, 0)`
+
+ImageMagic driver has the following options
+
+* `convertPath` - `convert` tool executable file path. The default value is `/usr/bin/convert`
+* `compositePath` - `composite` tool executable file path. The default value is `/usr/bin/composite`
+
+`$logCallback` - you can specify a log callback function or method if you are going to
+implement ImageHandler logging system. The format is the same as for `call_user_func`
+php function. The chosen function or method should have two parameters
+
+`$logMessage` - text of the log message
+`$logLevel` - log level. Possible values
+
+* `LOG_LEVEL_TRACE`
+* `LOG_LEVEL_WARNING`
+* `LOG_LEVEL_ERROR`
+* `LOG_LEVEL_INFO`
 
 Image loading
 -------------
@@ -106,8 +126,7 @@ public function show($inFormat = false, $jpegQuality = 75);
 `$jpegQuality` - image quality (for JPEG only). Default value is `75`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->crop(20, 20, 200, 200)
     ->show();
 ~~~
@@ -126,8 +145,7 @@ public function thumb($toWidth, $toHeight, $proportional = true);
 `$proportional` - proportional scaling. Default value is `true`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
 ~~~
@@ -146,8 +164,7 @@ public function resize($toWidth, $toHeight, $proportional = true);
 `$proportional` - proportional scaling. Default value is `true`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->resize(80, 80, false)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/80x80.jpg')
     ->reload()
@@ -179,8 +196,7 @@ public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CO
 * `CORNER_CENTER` - image middle point
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->watermark($_SERVER['DOCUMENT_ROOT'] . '/upload/watermark.png', 10, 20, CImageHandler::CORNER_LEFT_BOTTOM, 0.3)
     ->thumb(200, 200)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/image2.jpg');
@@ -200,8 +216,7 @@ public function flip($mode);
 * `FLIP_BOTH` - first two options simultaneously
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->flip(CImageHandler::FLIP_BOTH)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/flipped.jpg');
 ~~~
@@ -216,8 +231,7 @@ public function rotate($degrees);
 `$degrees` - degrees. Value can be negative; in that case image will be rotated anticlockwise
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->rotate(-90)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/rotated.jpg');
 ~~~
@@ -238,8 +252,7 @@ public function crop($width, $height, $startX = false, $startY = false);
 `$startY` - vertical offset. Value can be `false,` in that case target area will be vertically cantered. Default value is `false`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
     ->crop(100, 100, 10, 10)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.png');
 ~~~
@@ -280,8 +293,7 @@ public function text($text, $fontFile, $size=12, $color=array(0, 0, 0), $corner=
 `$alpha` - text transparency. Possible value is between 0 and 127. Default value is 0, i.e. completely opaque text
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/image.jpg')
     ->text('Hello!', $_SERVER['DOCUMENT_ROOT'] . '/upload/georgia.ttf',
         20, array(255,0,0), CImageHandler::CORNER_LEFT_BOTTOM, 10, 10)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/text.jpg');
@@ -299,8 +311,7 @@ public function adaptiveThumb($width, $height);
 `$height` - target height
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->adaptiveThumb(50, 50)
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.jpg');
 ~~~
@@ -319,8 +330,7 @@ public function resizeCanvas($toWidth, $toHeight, $backgroundColor = array(255, 
 `$backgroundColor` - text color in RGB format `array(red, green, blue)`. Default value is white color `array(255, 255, 255)`
 
 ~~~php
-Yii::app()->ih
-    ->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->resizeCanvas(300,300, array(0,255,0))
     ->save($_SERVER['DOCUMENT_ROOT'] . '/upload/test2.jpg');
 ~~~
@@ -328,8 +338,8 @@ Yii::app()->ih
 If you put original width and height as parameters, than only background will be filled:
 
 ~~~php
-Yii::app()->ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
-    ->resizeCanvas(Yii::app()->ih->width,Yii::app()->ih->height,array(0, 255, 0))
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.png')
+    ->resizeCanvas($ih->getWidth(),$ih->getHeight(),array(0, 255, 0))
     ->show();
 ~~~
 
@@ -343,7 +353,7 @@ public function grayscale();
 No parameters.
 
 ~~~php
-Yii::app()->ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
+$ih->load($_SERVER['DOCUMENT_ROOT'] . '/upload/test.jpg')
     ->grayscale()
     ->show();
 ~~~

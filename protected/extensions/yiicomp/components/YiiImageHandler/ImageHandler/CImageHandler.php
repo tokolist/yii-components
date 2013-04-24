@@ -3,8 +3,8 @@
  * Image handler
  * @author Yaroslav Pelesh aka Tokolist http://tokolist.com
  * @author Kosenka https://github.com/kosenka
- * @link https://github.com/tokolist/yii-components
- * @version 2.0
+ * @link https://github.com/tokolist/image-handler
+ * @version 2.0 beta
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -85,7 +85,7 @@ class CImageHandler
 		return $className . '::' . $methodName . '()';
 	}
 
-	public function __construct($driver, $driverOptions=array(), $logCallback = false) {
+	public function __construct($driver='GD', $driverOptions=array(), $logCallback = false) {
 		if(empty($driver))
 		{
 			throw new Exception('Invalid driver name');
