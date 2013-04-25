@@ -83,7 +83,7 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	
 	public function watermark($wImg, $posX, $posY, $watermarkWidth, $watermarkHeight, $corner)
 	{
-		if($corner == self::CORNER_TILE)
+		if($corner == CImageHandler::CORNER_TILE)
 		{
 			$this->commandString = $this->compositePath." -quiet -dissolve 25 -tile ".$watermarkFile." ".$this->fileName." %dest%";
 		}
@@ -97,13 +97,13 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch($mode)
 		{
-			case self::FLIP_HORIZONTAL:
+			case CImageHandler::FLIP_HORIZONTAL:
 				$this->commandString = $this->convertPath." -flop ".$this->fileName." %dest%";
 				break;
-			case self::FLIP_VERTICAL:
+			case CImageHandler::FLIP_VERTICAL:
 				$this->commandString = $this->convertPath." -flip ".$this->fileName." %dest%";
 				break;
-			case self::FLIP_BOTH:
+			case CImageHandler::FLIP_BOTH:
 				$this->commandString = $this->convertPath." -flop -flip ".$this->fileName." %dest%";
 				break;
 			default:
@@ -155,13 +155,13 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch($toFormat)
 		{
-			case self::IMG_GIF:
+			case CImageHandler::IMG_GIF:
 				$format="GIF";
 				break;
-			case self::IMG_JPEG:
+			case CImageHandler::IMG_JPEG:
 				$format="JPG";
 				break;
-			case self::IMG_PNG:
+			case CImageHandler::IMG_PNG:
 				$format="PNG";
 				break;
 			default:

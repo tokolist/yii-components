@@ -11,6 +11,9 @@ require 'ImageHandler\CImageHandler.php';
 
 class CYiiImageHandler extends CApplicationComponent
 {
+	/**
+	 * @var CImageHandler
+	 */
 	private $imageHandler;
 	public $driver = 'GD';
 	public $driverOptions = array();
@@ -25,6 +28,31 @@ class CYiiImageHandler extends CApplicationComponent
 			$this->driverOptions,
 			array($this, 'log')
 		);
+	}
+	
+	public function getImage()
+	{
+		return $this->imageHandler->getImage();
+	}
+
+	public function getFormat()
+	{
+		return $this->imageHandler->getFormat();
+	}
+
+	public function getWidth()
+	{
+		return $this->imageHandler->getWidth();
+	}
+
+	public function getHeight()
+	{
+		return $this->imageHandler->getHeight();
+	}
+
+	public function getMimeType()
+	{
+		return $this->imageHandler->getMimeType();
 	}
 	
 	public function load($file)

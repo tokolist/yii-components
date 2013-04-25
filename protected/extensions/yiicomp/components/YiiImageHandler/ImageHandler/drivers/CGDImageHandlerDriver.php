@@ -164,15 +164,15 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 
 		switch ($mode)
 		{
-			case self::FLIP_HORIZONTAL:
+			case CImageHandler::FLIP_HORIZONTAL:
 				$srcX = $width - 1;
 				$srcWidth = -$width;
 				break;
-			case self::FLIP_VERTICAL:
+			case CImageHandler::FLIP_VERTICAL:
 				$srcY = $height - 1;
 				$srcHeight = -$height;
 				break;
-			case self::FLIP_BOTH:
+			case CImageHandler::FLIP_BOTH:
 				$srcX = $width - 1;
 				$srcY = $height - 1;
 				$srcWidth = -$width;
@@ -220,39 +220,39 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 
 		switch($corner)
 		{
-			case self::CORNER_LEFT_TOP:
+			case CImageHandler::CORNER_LEFT_TOP:
 				$posX = $offsetX;
 				$posY = $offsetY;
 				break;
-			case self::CORNER_RIGHT_TOP:
+			case CImageHandler::CORNER_RIGHT_TOP:
 				$posX = $this->width - $textWidth - $offsetX;
 				$posY = $offsetY;
 				break;
-			case self::CORNER_LEFT_BOTTOM:
+			case CImageHandler::CORNER_LEFT_BOTTOM:
 				$posX = $offsetX;
 				$posY = $this->height - $textHeight - $offsetY;
 				break;
-			case self::CORNER_RIGHT_BOTTOM:
+			case CImageHandler::CORNER_RIGHT_BOTTOM:
 				$posX = $this->width - $textWidth - $offsetX;
 				$posY = $this->height - $textHeight - $offsetY;
 				break;
-			case self::CORNER_CENTER:
+			case CImageHandler::CORNER_CENTER:
 				$posX = floor(($this->width - $textWidth) / 2);
 				$posY = floor(($this->height - $textHeight) / 2);
 				break;
-			case self::CORNER_CENTER_TOP:
+			case CImageHandler::CORNER_CENTER_TOP:
 				$posX = floor(($this->width - $textWidth) / 2);
 				$posY = $offsetY;
 				break;
-			case self::CORNER_CENTER_BOTTOM:
+			case CImageHandler::CORNER_CENTER_BOTTOM:
 				$posX = floor(($this->width - $textWidth) / 2);
 				$posY = $this->height - $textHeight - $offsetY;
 				break;
-			case self::CORNER_LEFT_CENTER:
+			case CImageHandler::CORNER_LEFT_CENTER:
 				$posX = $offsetX;
 				$posY = floor(($this->height - $textHeight) / 2);
 				break;
-			case self::CORNER_RIGHT_CENTER:
+			case CImageHandler::CORNER_RIGHT_CENTER:
 				$posX = $this->width - $textWidth - $offsetX;
 				$posY = floor(($this->height - $textHeight) / 2);
 				break;
@@ -341,13 +341,13 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 	{
 		switch($inFormat)
 		{
-			case self::IMG_GIF:
+			case CImageHandler::IMG_GIF:
 				imagegif($this->image);
 				break;
-			case self::IMG_JPEG:
+			case CImageHandler::IMG_JPEG:
 				imagejpeg($this->image, null, $jpegQuality);
 				break;
-			case self::IMG_PNG:
+			case CImageHandler::IMG_PNG:
 				imagepng($this->image);
 				break;
 			default:

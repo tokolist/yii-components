@@ -80,9 +80,9 @@ class CImageHandler
 		}
 	}
 	
-	public static function getMethodStr($className = __CLASS__, $methodName = __METHOD__)
+	public static function getMethodStr($methodName, $methodArgs=array())
 	{
-		return $className . '::' . $methodName . '()';
+		return $methodName . '(' . implode(', ', $methodArgs) . ')';
 	}
 
 	public function __construct($driver='GD', $driverOptions=array(), $logCallback = false) {
@@ -112,7 +112,7 @@ class CImageHandler
 
 	private function checkLoaded()
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		if(!$this->driver->checkLoaded())
 		{
@@ -122,7 +122,7 @@ class CImageHandler
 
 	private function loadImage($file)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$result = array();
 		
@@ -144,7 +144,7 @@ class CImageHandler
 
 	protected function initImage($image = false)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 		
 		if($image === false)
 		{
@@ -156,7 +156,7 @@ class CImageHandler
 
 	public function load($file)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->freeImage();
 		
@@ -174,7 +174,7 @@ class CImageHandler
 
 	public function reload()
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->initImage();
@@ -184,7 +184,7 @@ class CImageHandler
 
 	public function resize($toWidth, $toHeight, $proportional = true)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -214,7 +214,7 @@ class CImageHandler
 
 	public function thumb($toWidth, $toHeight, $proportional = true)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -232,7 +232,7 @@ class CImageHandler
 
 	public function watermark($watermarkFile, $offsetX, $offsetY, $corner = self::CORNER_RIGHT_BOTTOM, $zoom = false)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -316,7 +316,7 @@ class CImageHandler
 
 	public function flip($mode)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->flip($mode);
@@ -326,7 +326,7 @@ class CImageHandler
 
 	public function rotate($degrees)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->rotate($degrees);
@@ -336,7 +336,7 @@ class CImageHandler
 
 	public function crop($width, $height, $startX = false, $startY = false)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 
@@ -361,7 +361,7 @@ class CImageHandler
 	public function text($text, $fontFile, $size=12, $color=array(0, 0, 0),
 		$corner=self::CORNER_LEFT_TOP, $offsetX=0, $offsetY=0, $angle=0, $alpha = 0)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->text($text, $fontFile, $size, $color, $angle, $alpha);
@@ -371,7 +371,7 @@ class CImageHandler
 
 	public function adaptiveThumb($width, $height, $backgroundColor=array(0, 0, 0))
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		
@@ -385,7 +385,7 @@ class CImageHandler
 
 	public function resizeCanvas($toWidth, $toHeight, $backgroundColor = array(255, 255, 255))
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
 		$this->driver->resizeCanvas($toWidth, $toHeight, $backgroundColor);
@@ -395,7 +395,7 @@ class CImageHandler
 
 	public function grayscale()
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->driver->grayscale();
 		
@@ -404,7 +404,7 @@ class CImageHandler
 
 	public function show($inFormat = false, $jpegQuality = 75)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 		
 		$this->checkLoaded();
 
@@ -435,7 +435,7 @@ class CImageHandler
 
 	public function save($file = false, $toFormat = false, $jpegQuality = 75, $touch = false)
 	{
-		$this->log(self::getMethodStr(), self::LOG_LEVEL_TRACE);
+		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		if(empty($file))
 		{
