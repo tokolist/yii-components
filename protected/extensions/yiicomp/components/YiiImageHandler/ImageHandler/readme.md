@@ -30,7 +30,7 @@ $ih = new CImageHandler();
 ~~~
 
 Instance creation
--------------
+-----------------
 
 ~~~php
 public function __construct($driver='GD', $driverOptions=array(), $logCallback = false);
@@ -71,6 +71,13 @@ php function. The chosen function or method should have two parameters
 * `LOG_LEVEL_WARNING`
 * `LOG_LEVEL_ERROR`
 * `LOG_LEVEL_INFO`
+
+Image information
+-----------------
+
+~~~php
+
+~~~
 
 Image loading
 -------------

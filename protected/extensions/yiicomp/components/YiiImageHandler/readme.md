@@ -32,9 +32,9 @@ Installation
     'ih'=>array(
         'class'=>'CYiiImageHandler',
 
-		'driver'->'GD', //driver which you are going to use (can be either GD or IM)
-		//GD is GD library
-		//IM is ImageMagic
+		'driver'=>'GD', //driver which you are going to use (can be either GD or IM)
+						//GD is GD library
+						//IM is ImageMagic
 
 		//You can specify chosen driver options if needed
 		'driverOptions'=>array(
@@ -63,4 +63,4 @@ $ih = new CYiiImageHandler();
 Usage
 -----
 
-Please refer to ImageHandler documentation.
+Please refer to the ImageHandler documentation.

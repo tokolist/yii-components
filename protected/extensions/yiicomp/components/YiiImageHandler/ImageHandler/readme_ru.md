@@ -30,7 +30,7 @@ $ih = new CImageHandler('GD');
 ~~~
 
 Создание экземпляра объекта
--------------
+---------------------------
 
 ~~~php
 public function __construct($driver='GD', $driverOptions=array(), $logCallback = false);

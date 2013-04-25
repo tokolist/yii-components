@@ -1,14 +1,14 @@
 YiiImageHandler
 =============
 
-YiiImageHandler обертка на ImageHandler для yii
+YiiImageHandler обертка над ImageHandler для yii
 
 Подключение
 -----------
 
 1. Скопируйте папку YiiImageHandler в папку `components`
 
-2. Добавте путь в импорт
+2. Добавьте путь в импорт
 
 ~~~php
 'import'=>array(
@@ -32,9 +32,9 @@ YiiImageHandler обертка на ImageHandler для yii
     'ih'=>array(
         'class'=>'CYiiImageHandler',
 
-		'driver'->'GD', //драйвер который будет использован (может быть GD или IM)
-		//GD - библиотека GD
-		//IM - ImageMagic
+		'driver'=>'GD', //драйвер который будет использован (может быть GD или IM)
+						//GD - библиотека GD
+						//IM - ImageMagic
 
 		//Можно указать опции драйвера
 		'driverOptions'=>array(
