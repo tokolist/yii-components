@@ -14,11 +14,15 @@ abstract class CImageHandlerDriver
 	 * @var CImageHandler
 	 */
 	protected $imageHandler = null;
+	
+	protected $image = null;
 	protected $format = 0;
 	protected $width = 0;
 	protected $height = 0;
 	protected $mimeType = '';
 	
+	protected $originalImage = null;
+
 	public function getImage()
 	{
 		return $this->image;
@@ -47,16 +51,41 @@ abstract class CImageHandlerDriver
 	public function __construct($imageHandler) {
 		$this->imageHandler = $imageHandler;
 	}
-
-	public function initImage($image)
+	
+	public function __destruct()
 	{
-		$this->width = $image['width'];
-		$this->height = $image['height'];
-		$this->mimeType = $image['mimeType'];
-		$this->format = $image['format'];
+		$this->freeImage();
+	}
+
+	public function initImage()
+	{
+		$this->format = $this->originalImage['format'];
+		$this->width = $this->originalImage['width'];
+		$this->height = $this->originalImage['height'];
+		$this->mimeType = $this->originalImage['mimeType'];
 	}
 	
-	abstract public function loadImage($file, $format);
+	public function getImageInfo($file)
+	{
+		//getimagesize does not require the GD image library.
+		if(($imageInfo = @getimagesize($file)))
+		{
+			return array(
+				'fileName' => $file,
+				'format' => $imageInfo[2],
+				'width' => $imageInfo[0],
+				'height' => $imageInfo[1],
+				'mimeType' => $imageInfo['mime'],
+			);
+		}
+		else
+		{
+			throw new Exception('Invalid image file');
+		}
+	}
+
+	abstract public function createImage($imageInfo);
+	abstract public function loadImage($image, $imageInfo);
 	abstract public function freeImage();
 	abstract public function checkLoaded();
 	abstract public function resize($toWidth, $toHeight);

@@ -14,7 +14,6 @@ class CImageHandler
 	 * @var CImageHandlerDriver
 	 */
 	private $driver = null;
-	private $originalImage = null;
 	private $fileName = '';
 	private $logCallback = false;
 
@@ -67,11 +66,6 @@ class CImageHandler
 		return $this->driver->getMimeType();
 	}
 
-	public function __destruct()
-	{
-		$this->freeImage();
-	}
-	
 	public function log($logMessage, $logLevel)
 	{
 		if($this->logCallback !== false)
@@ -92,7 +86,7 @@ class CImageHandler
 		}
 		
 		$driverClassName = "C{$driver}ImageHandlerDriver";
-		require "drivers\\$driverClassName.php";
+		require "drivers\\{$driverClassName}.php";
 		$this->driver = new $driverClassName($this);
 		
 		foreach($driverOptions as $option => $value)
@@ -104,10 +98,10 @@ class CImageHandler
 		
 		return $this;
 	}
-
-	private function freeImage()
+	
+	public function __destruct()
 	{
-		$this->driver->freeImage();
+		unset($this->driver);
 	}
 
 	private function checkLoaded()
@@ -120,49 +114,17 @@ class CImageHandler
 		}
 	}
 
-	private function loadImage($file)
-	{
-		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
-
-		$result = array();
-		
-		if(($imageInfo = @getimagesize($file)))
-		{
-			$result['width'] = $imageInfo[0];
-			$result['height'] = $imageInfo[1];
-			$result['mimeType'] = $imageInfo['mime'];
-			$result['format'] = $imageInfo[2];
-			$result['image'] = $this->driver->loadImage($file, $result['format']);
-			
-			return $result;
-		}
-		else
-		{
-			throw new Exception('Invalid image file');
-		}
-	}
-
-	protected function initImage($image = false)
-	{
-		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
-		
-		if($image === false)
-		{
-			$image = $this->originalImage;
-		}
-		
-		$this->driver->initImage($image);
-	}
-
 	public function load($file)
 	{
 		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
-		$this->freeImage();
+		$this->driver->freeImage();
 		
-		if(($this->originalImage = $this->loadImage($file)))
+		$imageInfo = $this->driver->getImageInfo($file);
+		
+		if($this->driver->loadImage($this->driver->createImage($imageInfo), $imageInfo))
 		{
-			$this->initImage();
+			$this->driver->initImage();
 			$this->fileName = $file;
 			return $this;
 		}
@@ -177,7 +139,7 @@ class CImageHandler
 		$this->log(self::getMethodStr(__METHOD__, func_get_args()), self::LOG_LEVEL_TRACE);
 
 		$this->checkLoaded();
-		$this->initImage();
+		$this->driver->initImage();
 
 		return $this;
 	}

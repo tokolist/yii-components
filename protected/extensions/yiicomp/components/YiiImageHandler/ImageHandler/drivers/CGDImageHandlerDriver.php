@@ -12,12 +12,11 @@ require '\..\CImageHandlerDriver.php';
 
 class CGDImageHandlerDriver extends CImageHandlerDriver
 {
-	private $image = null;
 	public $transparencyColor = array(0, 0, 0);
 
-	public function loadImage($file, $format)
+	public function createImage($imageInfo)
 	{
-		switch ($format)
+		switch($format)
 		{
 			case CImageHandler::IMG_GIF:
 				if(($result = imagecreatefromgif($file)))
@@ -54,9 +53,9 @@ class CGDImageHandlerDriver extends CImageHandlerDriver
 		}
 	}
 	
-	public function initImage($image)
+	public function initImage()
 	{
-		parent::initImage($image);
+		parent::initImage();
 		
 		if(is_resource($this->image))
 		{

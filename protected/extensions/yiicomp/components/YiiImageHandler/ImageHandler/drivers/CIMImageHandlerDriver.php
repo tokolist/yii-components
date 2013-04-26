@@ -18,20 +18,34 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 	protected $fileName = '';
 
 
-	public function __construct($imageHandler) {
+	public function __construct($imageHandler)
+	{
 		parent::__construct();
-		
+	}
+	
+	private function checkIMPaths()
+	{
 		if(empty($this->convertPath))
 		{
-			throw new Exception('ImageMagick::convert not set');
+			throw new Exception('ImageMagick::convertPath is not set');
 		}
 		
 		if(empty($this->compositePath))
 		{
-			throw new Exception('ImageMagick::composite not set');
+			throw new Exception('ImageMagick::compositePath is not set');
+		}
+		
+		if(!file_exists($this->convertPath))
+		{
+			throw new Exception("File {$this->convertPath} not found");
+		}
+		
+		if(!file_exists($this->compositePath))
+		{
+			throw new Exception("File {$this->compositePath} not found");
 		}
 	}
-	
+
 	private function colorToHex($color)
 	{
 		return str_pad(dechex($color), 2, '0', STR_PAD_LEFT);
@@ -56,14 +70,17 @@ class CIMImageHandlerDriver extends CImageHandlerDriver
 			throw new Exception("File {$file} not found");
 		}
 		
+		$this->checkIMPaths();
+		
 		return $file;
 	}
 	
-	public function initImage($image)
+	public function initImage()
 	{
-		parent::initImage($image);
+		parent::initImage();
 		
-		$this->fileName = $image['image'];
+		//TODO copy to temporary file
+		//$this->fileName = $image['image'];
 	}
 	
 	public function freeImage()
